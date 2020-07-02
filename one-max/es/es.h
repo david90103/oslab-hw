@@ -1,19 +1,14 @@
 #include <stdlib.h>
 #include <time.h>
 #include <iostream>
+#include "../lib/OneMax.h"
 using namespace std;
 
 /**
  * Exhausted search
  */
-class ES {
+class ES : OneMax {
     private:
-        bool *arr;
-        bool *best;
-        int size;
-        int score;
-        int bestScore;
-        void applyBest();
         int eval();
 
     public:

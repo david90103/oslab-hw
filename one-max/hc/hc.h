@@ -1,18 +1,22 @@
 #include <stdlib.h>
 #include <time.h>
 #include <iostream>
+#include "../lib/OneMax.h"
 using namespace std;
 
-class HC {
+/**
+ * Hill climbing
+ */
+class HC : OneMax {
     private:
-        char *arr;
-        char *best;
-        int bestScore;
+        int eval(bool *arr);
+        bool isZero();
 
     public:
-        HC(int iterations, int bits, char const *seedfile);
+        HC(int bits, char const *seedfile);
+        ~HC();
+        void printArray();
         void nextEnum();
-        // void left();
-        // void right();
         int getBestScore() {return bestScore;}
+        bool done() {return bestScore == size;}
 };
