@@ -11,11 +11,6 @@ ES::ES(int bits, char const *seedfile) {
     // TODO read seed from file
 }
 
-ES::~ES() {
-    free(arr);
-    free(best);
-}
-
 void ES::printArray() {
     for (int i = 0; i < size; i++) {
         cout << (arr[i]) ? "1" : "0";

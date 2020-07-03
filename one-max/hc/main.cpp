@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
         hc.nextEnum();
         hc.printArray();
         // if (i % 10000 == 0) {
-        //     cout << "Iteration: " << i << " Bhct score: " << hc.getBestScore() << endl;
+        //     cout << "Iteration: " << i << " Best score: " << hc.getBestScore() << endl;
         // } 
         i++;
     }

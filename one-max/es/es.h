@@ -7,15 +7,12 @@ using namespace std;
 /**
  * Exhausted search
  */
-class ES : OneMax {
+class ES : public OneMax {
     private:
         int eval();
 
     public:
         ES(int bits, char const *seedfile);
-        ~ES();
-        void printArray();
-        void nextEnum();
-        int getBestScore() {return bestScore;}
-        bool done() {return bestScore == size;}
+        void printArray() override;
+        void nextEnum() override;
 };

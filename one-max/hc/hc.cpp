@@ -12,11 +12,6 @@ HC::HC(int bits, char const *seedfile) {
     // TODO read seed from file
 }
 
-HC::~HC() {
-    free(arr);
-    free(best);
-}
-
 void HC::printArray() {
     for (int i = 0; i < size; i++) {
         cout << (arr[i]) ? "1" : "0";
@@ -70,8 +65,8 @@ void HC::nextEnum() {
             carry = carry & temp;
         }
     } else {
+        // minus 1
         if (!isZero()) {
-            // minus 1
             if (!new_arr[i]) {
                 do {
                     i--;
