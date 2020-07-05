@@ -8,6 +8,7 @@ class OneMax {
 
     public:
         ~OneMax() { free(arr); free(best); }
+        int getScore() { return score; }
         virtual void nextEnum() = 0;
         virtual void printArray() = 0;
         inline int getBestScore() { return bestScore; }

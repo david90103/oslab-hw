@@ -7,7 +7,7 @@ HC::HC(int bits, char const *seedfile) {
     arr = (bool *) malloc(sizeof(bool) * size);
     best = (bool *) malloc(sizeof(bool) * size);
     for (int i = 0; i < size; i++) {
-        arr[i] = best[i] = (rand() % 2) ? true : false;
+        arr[i] = best[i] = rand() & 1;
     }
     // TODO read seed from file
 }

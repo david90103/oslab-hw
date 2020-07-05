@@ -1,4 +1,4 @@
-SUBDIRS = es hc
+SUBDIRS = hc es
 
 all:
 	for i in $(SUBDIRS); do\
@@ -7,3 +7,4 @@ all:
 
 clean:
 	rm -f *.exe
+	rm -f output_*.txt
