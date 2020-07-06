@@ -22,9 +22,10 @@ echo "Start!"
 
 for ((r = 0; r < RUNS; r++)); do
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        "./$ALGO" $ITERATIONS $BITS $SEEDFILE
+        EXE="./$ALGO"
     else
-        "./$ALGO.exe" $ITERATIONS $BITS $SEEDFILE
+        EXE="./$ALGO.exe"
     fi
+    $EXE $ITERATIONS $BITS $SEEDFILE
     sleep 1
 done
