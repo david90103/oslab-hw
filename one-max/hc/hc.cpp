@@ -1,15 +1,24 @@
 #include "hc.h"
 
-HC::HC(int bits, char const *seedfile) {
+HC::HC(int bits, char *seedfile) {
+    char c;
+    FILE *fp = fopen(seedfile, "r");
     srand(time(NULL));
     bestScore = 0;
     size = bits;
     arr = (bool *) malloc(sizeof(bool) * size);
     best = (bool *) malloc(sizeof(bool) * size);
     for (int i = 0; i < size; i++) {
-        arr[i] = best[i] = rand() & 1;
+        if (fp) {
+            fscanf(fp, "%c", &c);
+            arr[i] = best[i] = (c == '0') ? false : true;
+        } else {
+            arr[i] = best[i] = rand() & 1;
+        }
     }
-    // TODO read seed from file
+    if (fp) {
+        fclose(fp);
+    }
 }
 
 void HC::printArray() {

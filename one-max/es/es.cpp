@@ -1,14 +1,23 @@
 #include "es.h"
 
-ES::ES(int bits, char const *seedfile) {
+ES::ES(int bits, char *seedfile) {
+    char c;
+    FILE *fp = fopen(seedfile, "r");
     bestScore = 0;
     size = bits;
     arr = (bool *) malloc(sizeof(bool) * size);
     best = (bool *) malloc(sizeof(bool) * size);
     for (int i = 0; i < size; i++) {
-        arr[i] = best[i] = false;
+        if (fp) {
+            fscanf(fp, "%c", &c);
+            arr[i] = best[i] = (c == '0') ? false : true;
+        } else {
+            arr[i] = best[i] =false;
+        }
     }
-    // TODO read seed from file
+    if (fp) {
+        fclose(fp);
+    }
 }
 
 void ES::printArray() {

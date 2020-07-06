@@ -12,7 +12,6 @@ runs = int(sys.argv[2])
 iterations = int(sys.argv[3])
 values = [0] * iterations
 
-
 if not algo in ALGORIGHMS:
     print("Support algorithms: ", end="")
     for i in ALGORIGHMS:

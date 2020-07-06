@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     FILE *fp;
     int file_index = 0;
     unsigned long long iter = 0;
-    std::string filename;
+    string filename;
 
     // Get output file name
     do {
@@ -23,12 +23,12 @@ int main(int argc, char *argv[]) {
     } while (exist(filename));
     fp = fopen(filename.c_str(), "w+");
 
-    HC hc = HC(atoi(argv[3]), argv[4]);
+    HC hc = HC(atoi(argv[2]), argv[3]);
 
-    for (int iter = 1; iter <= atoi(argv[2]); iter++) {
+    for (int iter = 1; iter <= atoi(argv[1]); iter++) {
         hc.nextEnum();
-        // hc.printArray();
-        fprintf(fp, "%d %d \n", iter, hc.getBestScore());
+        hc.printArray();
+        fprintf(fp, "%d %d\n", iter, hc.getBestScore());
         if (iter % 10 == 0) {
             cout << "Iteration: " << iter << " Best score: " << hc.getBestScore() << endl;
         } 

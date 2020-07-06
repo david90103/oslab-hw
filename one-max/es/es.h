@@ -12,7 +12,7 @@ class ES : public OneMax {
         int eval();
 
     public:
-        ES(int bits, char const *seedfile);
+        ES(int bits, char *seedfile);
         void printArray() override;
         void nextEnum() override;
 };

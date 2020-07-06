@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <time.h>
+#include <cstring>
 #include <iostream>
 #include "../lib/OneMax.h"
 using namespace std;
@@ -13,7 +14,7 @@ class HC : public OneMax {
         bool isZero();
 
     public:
-        HC(int bits, char const *seedfile);
+        HC(int bits, char *seedfile);
         void printArray() override;
         void nextEnum() override;
 };
