@@ -19,12 +19,13 @@ class SA {
         double temperature;
         vector<bool> arr;
         vector<bool> best;
+        vector<int> result;
         vector<bool> transition();
         bool isZero();
         int evaluate(vector<bool> arr);
         inline double acceptance(int current_eval, int new_eval);
     public:
-        SA(int bits, double max_temp, double min_temp, char *seedfile);
+        SA(int bits, double max_temp, double min_temp, char const *seedfile);
         void printArray();
-        void run(int iterations);
+        vector<int> run(int iterations);
 };

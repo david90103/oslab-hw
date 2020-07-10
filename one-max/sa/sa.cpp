@@ -1,6 +1,6 @@
 #include "sa.h"
 
-SA::SA(int bits, double max_t, double min_t, char *seedfile) {
+SA::SA(int bits, double max_t, double min_t, char const *seedfile) {
     char c;
     bool tmp;
     FILE *fp = fopen(seedfile, "r");
@@ -90,18 +90,15 @@ bool SA::isZero() {
     return true;
 }
 
-
 /**
  * Acceptance of SA
  * https://en.wikipedia.org/wiki/Simulated_annealing
  */
 inline double SA::acceptance(int current_eval, int new_eval) {
-    double t = exp(-((double) current_eval - new_eval) / temperature);
-    // cout << (double) new_eval - current_eval << endl;
-    return t;
+    return exp(-((double) current_eval - new_eval) / temperature);
 }
 
-void SA::run(int iterations) {
+vector<int> SA::run(int iterations) {
     int new_enum_eval;
     vector<bool> new_enum;
     unsigned long long iter = 0;
@@ -117,17 +114,15 @@ void SA::run(int iterations) {
             arr = new_enum;
             score = new_enum_eval;
         } else {
-            // cout << acceptance(score, new_enum_eval) << endl;
             if ((double) rand() / RAND_MAX < acceptance(score, new_enum_eval)) {
                 arr = new_enum;
                 score = new_enum_eval;
-                cout << "accepted" << endl;
-            } else {
-                // cout << "not accepted" << endl;
             }
         }
-        printArray();
-        temperature *= 0.999;
+        temperature *= 0.99;
+
+        // Record and log
+        result.push_back(bestScore);
         if (iter % 10 == 0) {
             cout << "Iteration: " << iter << " Best score: " << bestScore << endl;
         }
@@ -137,4 +132,5 @@ void SA::run(int iterations) {
         }
     }
     cout << "Done." << endl;
+    return result;
 }

@@ -95,8 +95,8 @@ void HC::nextEnum() {
         for (int i = 0; i < size; i++) {
             arr[i] = new_arr[i];
         }
-        free(new_arr);
     }
+    free(new_arr);
 }
 
 bool HC::isZero() {
