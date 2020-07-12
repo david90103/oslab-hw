@@ -1,5 +1,7 @@
 #include "./sa/sa.h"
+#include "./ts/ts.h"
 #include <stdio.h>
+#include <time.h>
 #include <string>
 
 inline bool exist(const std::string& name) {
@@ -8,6 +10,12 @@ inline bool exist(const std::string& name) {
         return true;
     }
     return false;
+}
+
+void delay() {
+    time_t start = time(NULL);
+    while (start == time(NULL))
+        ;
 }
 
 int main(int argc, char *argv[]) {
@@ -27,12 +35,15 @@ int main(int argc, char *argv[]) {
     double max_t = 10.0;
     double min_t = 0.0001;
 
+    // TS parameters
+    int tabu_list_size = 7;
+
     /**
      * Parameters:
      * es [runs] [iterations] [bits] [seedfile]
      * hc [runs] [iterations] [bits] [seedfile]
      * sa [runs] [iterations] [bits] [seedfile] [max temp] [min temp]
-     * ts [runs] [iterations] [bits] [seedfile]
+     * ts [runs] [iterations] [bits] [seedfile] [tabu list size]
      */
     algorithm = argv[1];
     runs = atoi(argv[2]);
@@ -52,10 +63,16 @@ int main(int argc, char *argv[]) {
         for (int run = 0; run < runs; run++) {
             SA sa = SA(bits, max_t, min_t, seedfile.c_str());
             results.push_back(sa.run(iterations));
+            delay();
         }
     }
-    if (strcmp(algorithm.c_str(), "tb") == 0) {
-
+    if (strcmp(algorithm.c_str(), "ts") == 0) {
+        tabu_list_size = atoi(argv[6]);
+        for (int run = 0; run < runs; run++) {
+            TS ts = TS(bits, tabu_list_size, seedfile.c_str());
+            results.push_back(ts.run(iterations));
+            delay();
+        }
     }
 
     // Process results

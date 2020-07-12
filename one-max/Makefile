@@ -1,10 +1,10 @@
-SUBDIRS = hc es sa
+SUBDIRS = hc es sa ts
 
 all:
 	for i in $(SUBDIRS); do\
 		g++ -c $$i/*.cpp;\
 	done
-	g++ -g main.cpp es.o hc.o sa.o -o main;
+	g++ -g main.cpp es.o hc.o sa.o ts.o -o main;
 
 clean:
 	rm -f *.exe
