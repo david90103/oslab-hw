@@ -27,5 +27,6 @@ class SA {
     public:
         SA(int bits, double max_temp, double min_temp, char const *seedfile);
         void printArray();
+        int getBestScore();
         vector<int> run(int iterations);
 };

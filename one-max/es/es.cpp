@@ -1,6 +1,6 @@
 #include "es.h"
 
-ES::ES(int bits, char *seedfile) {
+ES::ES(int bits, const char *seedfile) {
     char c;
     FILE *fp = fopen(seedfile, "r");
     bestScore = 0;
@@ -62,4 +62,19 @@ void ES::nextEnum() {
         carry = carry & temp;
     }
     score = eval();
+}
+
+vector<int> ES::run() {
+    unsigned long long i = 0;
+    while (!done()) {
+        nextEnum();
+        // printArray();
+        result.push_back(bestScore);
+        if (i % 10000000 == 0) {
+            cout << "Iteration: " << i << " Best score: " << bestScore << endl;
+        } 
+        i++;
+    }
+    cout << "Done." << endl;
+    return result;
 }

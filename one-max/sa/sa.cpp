@@ -31,6 +31,10 @@ void SA::printArray() {
     cout << " Score: " << score << " Best: " << bestScore << endl;
 }
 
+int SA::getBestScore() {
+    return bestScore;
+}
+
 /**
  * Objective function
  */

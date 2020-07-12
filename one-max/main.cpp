@@ -1,3 +1,5 @@
+#include "./es/es.h"
+#include "./hc/hc.h"
 #include "./sa/sa.h"
 #include "./ts/ts.h"
 #include <stdio.h>
@@ -52,10 +54,20 @@ int main(int argc, char *argv[]) {
     seedfile = argv[5];
 
     if (strcmp(algorithm.c_str(), "es") == 0) {
-        ///
+        // iterations is not used
+        cout << "iterations is not used!" << endl;
+        for (int run = 0; run < runs; run++) {
+            ES es = ES(bits, seedfile.c_str());
+            results.push_back(es.run());
+            delay();
+        }
     }
     if (strcmp(algorithm.c_str(), "hc") == 0) {
-        ///
+        for (int run = 0; run < runs; run++) {
+            HC hc = HC(bits, seedfile.c_str());
+            results.push_back(hc.run(iterations));
+            delay();
+        }
     }
     if (strcmp(algorithm.c_str(), "sa") == 0) {
         max_t = atof(argv[6]);
@@ -63,6 +75,7 @@ int main(int argc, char *argv[]) {
         for (int run = 0; run < runs; run++) {
             SA sa = SA(bits, max_t, min_t, seedfile.c_str());
             results.push_back(sa.run(iterations));
+            cout << "Run " << run << " best: " << sa.getBestScore() << endl;
             delay();
         }
     }
@@ -71,6 +84,7 @@ int main(int argc, char *argv[]) {
         for (int run = 0; run < runs; run++) {
             TS ts = TS(bits, tabu_list_size, seedfile.c_str());
             results.push_back(ts.run(iterations));
+            cout << "Run " << run << " best: " << ts.getBestScore() << endl;
             delay();
         }
     }

@@ -1,6 +1,6 @@
 #include "hc.h"
 
-HC::HC(int bits, char *seedfile) {
+HC::HC(int bits, const char *seedfile) {
     char c;
     FILE *fp = fopen(seedfile, "r");
     srand(time(NULL));
@@ -106,4 +106,18 @@ bool HC::isZero() {
         }
     }
     return true;
+}
+
+vector<int> HC::run(int iterations) {
+    unsigned long long iter = 0;
+    for (int iter = 1; iter <= iterations; iter++) {
+        nextEnum();
+        printArray();
+        result.push_back(bestScore);
+        if (iter % 10 == 0) {
+            cout << "Iteration: " << iter << " Best score: " << bestScore << endl;
+        } 
+    }
+    cout << "Done." << endl;
+    return result;
 }

@@ -30,5 +30,6 @@ class TS {
     public:
         TS(int bits, int tabu_list_size, char const *seedfile);
         void printArray();
+        int getBestScore();
         vector<int> run(int iterations);
 };

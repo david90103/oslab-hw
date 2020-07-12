@@ -30,6 +30,10 @@ void TS::printArray() {
     cout << " Score: " << score << " Best: " << bestScore << endl;
 }
 
+int TS::getBestScore() {
+    return bestScore;
+}
+
 /**
  * Objective function
  */
@@ -63,20 +67,20 @@ vector<bool> TS::getNotTabuLeft(vector<bool> arr) {
     bool temp;
     bool carry;
     int i;
+    if (isZero(arr)) {
+        return arr;
+    }
     do {
         i = arr.size() - 1;
-        if (!isZero(arr)) {
-            if (!arr[i]) {
-                do {
-                    i--;
-                    temp = arr[i];
-                    arr[i] = true;
-                } while (!temp);
-                arr[i] = false;
-            }
-            arr[arr.size() - 1] = !arr[arr.size() - 1];
-            
+        if (!arr[i]) {
+            do {
+                i--;
+                temp = arr[i];
+                arr[i] = true;
+            } while (!temp);
+            arr[i] = false;
         }
+        arr[arr.size() - 1] = !arr[arr.size() - 1];
     } while (inTabuList(arr));
     return arr;
 }
@@ -85,17 +89,18 @@ vector<bool> TS::getNotTabuRight(vector<bool> arr) {
     bool temp;
     bool carry;
     int i;
+    if (isMax(arr)) {
+        return arr;
+    }
     do {
         i = arr.size() - 1;
-        if (!isMax(arr)) {
-            carry = arr[i] & 1;
-            arr[i] = !arr[i];
-            while (carry && i > 0) {
-                i--;
-                temp = arr[i];
-                arr[i] = carry ^ temp;
-                carry = carry & temp;
-            }
+        carry = arr[i] & 1;
+        arr[i] = !arr[i];
+        while (carry && i > 0) {
+            i--;
+            temp = arr[i];
+            arr[i] = carry ^ temp;
+            carry = carry & temp;
         }
     } while (inTabuList(arr));
     return arr;
@@ -153,7 +158,7 @@ vector<int> TS::run(int iterations) {
         //     cout << " ";
         // }
         // cout << endl;
-        printArray();
+        // printArray();
         // Record and log
         result.push_back(bestScore);
         if (iter % 10 == 0) {
