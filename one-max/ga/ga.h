@@ -16,6 +16,7 @@ class GA {
         double crossover_rate;
         double mutation_rate;
         vector<vector<bool>> population;
+        int fitness_values_sum;
         vector<int> fitness_values;
         vector<bool> best;
         vector<int> result;

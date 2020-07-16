@@ -10,6 +10,7 @@ GA::GA(int bits, int population_s, double crossover_r, double mutation_r, char c
     population_size = population_s;
     crossover_rate = crossover_r;
     mutation_rate = mutation_r;
+    fitness_values_sum = 0;
     fitness_values = vector<int>(population_size, 0);
     for (int i = 0; i < population_size; i++) {
         tmp = vector<bool>();
@@ -18,7 +19,7 @@ GA::GA(int bits, int population_s, double crossover_r, double mutation_r, char c
                 fscanf(fp, "%c", &c);
                 tmp.push_back((c == '0') ? false : true);
             } else {
-                tmp.push_back(rand() & 1); 
+                tmp.push_back(rand() & 1);
             }
         }
         population.push_back(tmp);
@@ -40,9 +41,17 @@ int GA::getBestScore() {
     return bestScore;
 }
 
+/**
+ * Evaluate every chromosome in population
+ * TODO: Only evaluate new chromosomes from crossover
+ */
 void GA::evalPopulation() {
+    int temp;
+    fitness_values_sum = 0;
     for (int i = 0; i < population.size(); i++) {
-        fitness_values[i] = fitness(population[i]);
+        temp = fitness(population[i]);
+        fitness_values[i] = temp;
+        fitness_values_sum += temp;
         if (fitness_values[i] > bestScore) {
             bestScore = fitness_values[i];
             best = population[i];
@@ -64,14 +73,12 @@ int GA::fitness(vector<bool> arr) {
     return result;
 }
 
+/**
+ * Selection using Roulette Wheel
+ */
 vector<bool> GA::rouletteWheel() {
     int sum = 0;
-    int target;
-    for (int i = 0; i < population_size; i++) {
-        sum += fitness_values[i];
-    }
-    target = rand() % sum;
-    sum = 0;
+    int target = rand() % fitness_values_sum;
     for (int i = 0; i < population_size; i++) {
         sum += fitness_values[i];
         if (sum >= target) {
@@ -81,6 +88,9 @@ vector<bool> GA::rouletteWheel() {
     return population[population_size - 1];
 }
 
+/**
+ * Selection using Tournament Selection
+ */
 vector<bool> GA::tournament() {
     int i = rand() % population_size;
     int j = rand() % population_size;
@@ -90,6 +100,9 @@ vector<bool> GA::tournament() {
     return population[j];
 }
 
+/**
+ * Crossover function, returns two children in a vector
+ */
 vector<vector<bool>> GA::crossover(vector<bool> father, vector<bool> mother) {
     int pivot = rand() % father.size();
     vector<bool> child_a(father.begin(), father.begin() + pivot);
@@ -113,10 +126,10 @@ vector<int> GA::run(int generations) {
 
         for (int i = 0; i < population_size / 2; i++) {
             // Selection
-            a = tournament();
-            b = tournament();
-            if (rand() / RAND_MAX < crossover_rate) {
-                // Crossover
+            a = rouletteWheel();
+            b = rouletteWheel();
+            // Crossover
+            if ((double) rand() / RAND_MAX < crossover_rate) {
                 crossover_result = crossover(a, b);
                 new_population.insert(new_population.end(), crossover_result.begin(), crossover_result.end());
             } else {
@@ -126,7 +139,7 @@ vector<int> GA::run(int generations) {
         }
         // Mutation
         for (int i = 0; i < new_population.size(); i++) {
-            if (rand() / RAND_MAX < mutation_rate) {
+            if ((double) rand() / RAND_MAX < mutation_rate) {
                 new_population[i] = mutation(new_population[i]);
             }
         }
