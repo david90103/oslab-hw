@@ -42,6 +42,7 @@ int main(int argc, char *argv[]) {
     int tabu_list_size = 7;
     
     // GA parameters
+    int population_size = 100;
     double crossover_rate = 0.6;
     double mutation_rate = 0.01;
 
@@ -51,7 +52,7 @@ int main(int argc, char *argv[]) {
      * hc [runs] [iterations] [bits] [seedfile]
      * sa [runs] [iterations] [bits] [seedfile] [max temp] [min temp]
      * ts [runs] [iterations] [bits] [seedfile] [tabu list size]
-     * ga [runs] [iterations] [bits] [seedfile] [crossover rate] [mutation rate]
+     * ga [runs] [iterations] [bits] [seedfile] [population size] [crossover rate] [mutation rate]
      */
     algorithm = argv[1];
     runs = atoi(argv[2]);
@@ -81,7 +82,7 @@ int main(int argc, char *argv[]) {
         for (int run = 0; run < runs; run++) {
             SA sa = SA(bits, max_t, min_t, seedfile.c_str());
             results.push_back(sa.run(iterations));
-            cout << "Run " << run << " best: " << sa.getBestScore() << endl;
+            cout << "Run " << run + 1 << " best: " << sa.getBestScore() << endl;
             delay();
         }
     }
@@ -90,25 +91,28 @@ int main(int argc, char *argv[]) {
         for (int run = 0; run < runs; run++) {
             TS ts = TS(bits, tabu_list_size, seedfile.c_str());
             results.push_back(ts.run(iterations));
-            cout << "Run " << run << " best: " << ts.getBestScore() << endl;
+            cout << "Run " << run + 1 << " best: " << ts.getBestScore() << endl;
             delay();
         }
     }
     if (strcmp(algorithm.c_str(), "ga") == 0) {
-        crossover_rate = atof(argv[6]);
-        mutation_rate = atof(argv[7]);
+        population_size = atoi(argv[6]);
+        crossover_rate = atof(argv[7]);
+        mutation_rate = atof(argv[8]);
         for (int run = 0; run < runs; run++) {
-            GA ga = GA(bits, seedfile.c_str());
+            GA ga = GA(bits, population_size, crossover_rate, mutation_rate, seedfile.c_str());
             results.push_back(ga.run(iterations));
-            cout << "Run " << run << " best: " << ga.getBestScore() << endl;
+            cout << "Run " << run + 1 << " best: " << ga.getBestScore() << endl;
             delay();
         }
     }
 
     // Process results
-    avg = vector<double>(iterations, 0);
     for (int i = 0; i < results.size(); i++) {
         for (int j = 0; j < results[i].size(); j++) {
+            if (avg.size() < j + 1) {
+                avg.push_back(0);
+            }
             avg[j] += results[i][j];
         }
     }

@@ -11,17 +11,23 @@ using namespace std;
 class GA {
     private:
         int size;
-        int score;
         int bestScore;
-        vector<bool> arr;
+        int population_size;
+        double crossover_rate;
+        double mutation_rate;
+        vector<vector<bool>> population;
+        vector<int> fitness_values;
         vector<bool> best;
         vector<int> result;
-        vector<bool> transition();
-        bool isZero();
-        int evaluate(vector<bool> arr);
+        int fitness(vector<bool> arr);
+        void evalPopulation();
+        vector<bool> rouletteWheel();
+        vector<bool> tournament();
+        vector<vector<bool>> crossover(vector<bool> father, vector<bool> mother);
+        inline vector<bool> mutation(vector<bool> target);
     public:
-        GA(int bits, char const *seedfile);
+        GA(int bits, int population_s, double crossover_r, double mutation_r, char const *seedfile);
         void printArray();
         int getBestScore();
-        vector<int> run(int iterations);
+        vector<int> run(int generations);
 };
