@@ -7,6 +7,7 @@ SA::SA(int bits, double max_t, double min_t, char const *seedfile) {
     srand(time(NULL));
     temperature = max_temp = max_t;
     min_temp = min_t;
+    score = 0;
     bestScore = 0;
     size = bits;
     for (int i = 0; i < size; i++) {
@@ -51,7 +52,7 @@ int SA::evaluate(vector<bool> arr) {
 /**
  * Get next enum by adding 1 or minus 1
  */
-vector<bool> SA::transition() {
+vector<bool> SA::transition_only_neighbor() {
     bool temp;
     bool carry;
     int new_score;
@@ -82,6 +83,21 @@ vector<bool> SA::transition() {
             new_arr[new_arr.size() - 1] = !new_arr[new_arr.size() - 1];
         }
     }
+    return new_arr;
+}
+
+/**
+ * Get next enum by random flip bit
+ */
+vector<bool> SA::transition() {
+    bool temp;
+    bool carry;
+    int new_score;
+    vector<bool> new_arr(arr);
+    int i = new_arr.size() - 1;
+
+    i = rand() % new_arr.size();
+    new_arr[i] = !new_arr[i];
     return new_arr;
 }
 
@@ -123,16 +139,14 @@ vector<int> SA::run(int iterations) {
                 score = new_enum_eval;
             }
         }
-        temperature *= 0.99;
+        if (temperature > min_temp) {
+            temperature *= 0.9;
+        }
 
         // Record and log
         result.push_back(bestScore);
         if (iter % 10 == 0) {
             cout << "Iteration: " << iter << " Best score: " << bestScore << endl;
-        }
-        if (temperature <= min_temp) {
-            cout << "Reached min temperature!" << endl;
-            break;
         }
     }
     cout << "Done." << endl;

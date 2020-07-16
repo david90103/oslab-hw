@@ -4,6 +4,7 @@ HC::HC(int bits, const char *seedfile) {
     char c;
     FILE *fp = fopen(seedfile, "r");
     srand(time(NULL));
+    score = 0;
     bestScore = 0;
     size = bits;
     arr = (bool *) malloc(sizeof(bool) * size);

@@ -21,6 +21,7 @@ class SA {
         vector<bool> best;
         vector<int> result;
         vector<bool> transition();
+        vector<bool> transition_only_neighbor();
         bool isZero();
         int evaluate(vector<bool> arr);
         inline double acceptance(int current_eval, int new_eval);

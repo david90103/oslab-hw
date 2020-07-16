@@ -36,6 +36,7 @@
         "xstring": "cpp",
         "xtr1common": "cpp",
         "cctype": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "vector": "cpp"
     }
 }

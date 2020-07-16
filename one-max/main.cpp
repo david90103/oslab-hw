@@ -2,6 +2,7 @@
 #include "./hc/hc.h"
 #include "./sa/sa.h"
 #include "./ts/ts.h"
+#include "./ga/ga.h"
 #include <stdio.h>
 #include <time.h>
 #include <string>
@@ -39,6 +40,10 @@ int main(int argc, char *argv[]) {
 
     // TS parameters
     int tabu_list_size = 7;
+    
+    // GA parameters
+    double crossover_rate = 0.6;
+    double mutation_rate = 0.01;
 
     /**
      * Parameters:
@@ -46,6 +51,7 @@ int main(int argc, char *argv[]) {
      * hc [runs] [iterations] [bits] [seedfile]
      * sa [runs] [iterations] [bits] [seedfile] [max temp] [min temp]
      * ts [runs] [iterations] [bits] [seedfile] [tabu list size]
+     * ga [runs] [iterations] [bits] [seedfile] [crossover rate] [mutation rate]
      */
     algorithm = argv[1];
     runs = atoi(argv[2]);
@@ -85,6 +91,16 @@ int main(int argc, char *argv[]) {
             TS ts = TS(bits, tabu_list_size, seedfile.c_str());
             results.push_back(ts.run(iterations));
             cout << "Run " << run << " best: " << ts.getBestScore() << endl;
+            delay();
+        }
+    }
+    if (strcmp(algorithm.c_str(), "ga") == 0) {
+        crossover_rate = atof(argv[6]);
+        mutation_rate = atof(argv[7]);
+        for (int run = 0; run < runs; run++) {
+            GA ga = GA(bits, seedfile.c_str());
+            results.push_back(ga.run(iterations));
+            cout << "Run " << run << " best: " << ga.getBestScore() << endl;
             delay();
         }
     }

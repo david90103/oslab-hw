@@ -5,6 +5,7 @@ TS::TS(int bits, int t_list_size, char const *seedfile) {
     bool tmp;
     FILE *fp = fopen(seedfile, "r");
     srand(time(NULL));
+    score = 0;
     bestScore = 0;
     size = bits;
     tabu_list_size = t_list_size;

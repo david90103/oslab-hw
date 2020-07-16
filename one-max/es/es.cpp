@@ -3,6 +3,7 @@
 ES::ES(int bits, const char *seedfile) {
     char c;
     FILE *fp = fopen(seedfile, "r");
+    score = 0;
     bestScore = 0;
     size = bits;
     arr = (bool *) malloc(sizeof(bool) * size);
