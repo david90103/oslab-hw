@@ -1,4 +1,4 @@
-set xrange[0:5000]
+set xrange[0:1000]
 set yrange[50:100]
 set xlabel "Number of evaluation"
 set ylabel "Objective value"

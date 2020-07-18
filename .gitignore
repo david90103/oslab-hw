@@ -29,7 +29,8 @@
 # Executables
 *.exe
 *.out
-*.
+*.app
+main
 
 # Result files
 output*.txt

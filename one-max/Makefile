@@ -10,3 +10,4 @@ clean:
 	rm -f *.exe
 	rm -f *.o
 	rm -f output_*.txt
+	rm -f main

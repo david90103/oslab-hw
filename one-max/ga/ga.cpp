@@ -27,7 +27,7 @@ GA::GA(int bits, int population_s, double crossover_r, double mutation_r, char c
     if (fp) {
         fclose(fp);
     }
-    evalPopulation();
+    evalPopulation(vector<bool>(population_size, true));
 }
 
 void GA::printArray() {
@@ -43,9 +43,10 @@ int GA::getBestScore() {
 
 /**
  * Evaluate every chromosome in population
- * TODO: Only evaluate new chromosomes from crossover
+ * Parameter is_new_member is a boolean list to track if a chromosome
+ * in population is created by crossover or directly from parents
  */
-void GA::evalPopulation() {
+void GA::evalPopulation(vector<bool> is_new_member) {
     int temp;
     fitness_values_sum = 0;
     for (int i = 0; i < population.size(); i++) {
@@ -56,7 +57,9 @@ void GA::evalPopulation() {
             bestScore = fitness_values[i];
             best = population[i];
         }
-        result.push_back(bestScore);
+        if (is_new_member[i]) {
+            result.push_back(bestScore);
+        }
     }
 }
 
@@ -123,6 +126,8 @@ vector<int> GA::run(int generations) {
         vector<bool> a, b;
         vector<vector<bool>> crossover_result;
         vector<vector<bool>> new_population;
+        // Save a boolean list to track if a chromosome is new or not, just for logging
+        vector<bool> new_member_list(population_size, false);
 
         for (int i = 0; i < population_size / 2; i++) {
             // Selection
@@ -132,6 +137,7 @@ vector<int> GA::run(int generations) {
             if ((double) rand() / RAND_MAX < crossover_rate) {
                 crossover_result = crossover(a, b);
                 new_population.insert(new_population.end(), crossover_result.begin(), crossover_result.end());
+                new_member_list[i * 2] = new_member_list[i * 2 + 1] = true;
             } else {
                 new_population.push_back(a);
                 new_population.push_back(b);
@@ -145,12 +151,9 @@ vector<int> GA::run(int generations) {
         }
         // Apply population and fitness values
         population = new_population;
-        evalPopulation();
+        evalPopulation(new_member_list);
         
         // Record and log
-        // for (int i = 0; i < population_size; i++) {
-        //     result.push_back(bestScore);
-        // }
         if (gen % 10 == 0) {
             cout << "Generation: " << gen << " Best score: " << bestScore << endl;
         }

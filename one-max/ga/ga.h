@@ -21,7 +21,7 @@ class GA {
         vector<bool> best;
         vector<int> result;
         int fitness(vector<bool> arr);
-        void evalPopulation();
+        void evalPopulation(vector<bool> is_new_member);
         vector<bool> rouletteWheel();
         vector<bool> tournament();
         vector<vector<bool>> crossover(vector<bool> father, vector<bool> mother);
