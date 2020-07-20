@@ -90,9 +90,6 @@ vector<bool> SA::transition_only_neighbor() {
  * Get next enum by random flip bit
  */
 vector<bool> SA::transition() {
-    bool temp;
-    bool carry;
-    int new_score;
     vector<bool> new_arr(arr);
     int i = new_arr.size() - 1;
 

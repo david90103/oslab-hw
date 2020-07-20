@@ -109,7 +109,7 @@ inline vector<bool> GA::mutation(vector<bool> target) {
 ```
 
 
-- 每個generation最後要將子代替換作父代並計算fitness value
+- 每個generation最後要以子代替換作父代並計算fitness value
 
 ```cpp
 // Apply population and fitness values
@@ -118,3 +118,15 @@ evalPopulation(new_member_list);
 ```
 
 ---
+
+### GA HC TS SA分別在BIT 數量是 10 20 50 100之下所找到的平均最佳解的TABLE
+
+|         | HC   | TS   | SA  | GA-R | GA-T |
+|---------|------|------|-----|------|------|
+| 10 BIT  | 5.8  | 7.5  | 10  | 10   | 10   |
+| 20 BIT  | 11.5 | 13   | 20  | 18.3 | 20   |
+| 50 BIT  | 26.3 | 27.1 | 50  | 37.9 | 43.8 |
+| 100 BIT | 51.2 | 51.5 | 100 | 67   | 78.4 |
+
+- 結果皆為1000 evaluation後
+- HC及TS只有尋找neighbor
