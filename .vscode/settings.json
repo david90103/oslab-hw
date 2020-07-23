@@ -37,6 +37,8 @@
         "xtr1common": "cpp",
         "cctype": "cpp",
         "string": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "deque": "cpp",
+        "queue": "cpp"
     }
 }
