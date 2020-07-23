@@ -1,10 +1,12 @@
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 #include <string>
 #include <cstring>
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <set>
 using namespace std;
 
 /**
@@ -12,26 +14,29 @@ using namespace std;
  */
 class ACO {
     private:
-        int size;
-        int bestScore;
-        vector<vector<bool>> population;
+        double bestScore;
+        vector<vector<int>> population;
         vector<vector<double>> cities;
         vector<vector<double>> pheromone;
-        vector<vector<double>> distance;
+        vector<vector<double>> distances;
         int ants;
         double alpha;
         double beta;
         double rho;
         double q;
-        int fitness_values_sum;
-        vector<int> fitness_values;
-        vector<bool> best;
-        vector<int> result;
+        double fitness_values_sum;
+        vector<double> fitness_values;
+        vector<int> best;
+        vector<double> result;
+        double distance(vector<double> city_a, vector<double> city_b);
         int fitness(vector<bool> arr);
+        int rouletteWheel(int current_city, vector<int> candidate_city);
         void evalPopulation(vector<bool> is_new_member);
+        void generatePath();
+        void updatePheromone();
     public:
-        ACO(int bits, int ants, double a, double b, double r, double q, char const *seedfile);
+        ACO(int ants, double a, double b, double r, double q, char const *seedfile);
         void printArray();
-        int getBestScore();
+        double getBestScore();
         vector<int> run(int generations);
 };

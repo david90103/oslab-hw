@@ -39,22 +39,21 @@ int main(int argc, char *argv[]) {
 
     /**
      * Parameters:
-     * aco [runs] [iterations] [bits] [seedfile] [ants] [alpha] [beta] [rho] [q]
+     * aco [runs] [iterations] [seedfile] [ants] [alpha] [beta] [rho] [q]
      */
     algorithm = argv[1];
     runs = atoi(argv[2]);
     iterations = atoi(argv[3]);
-    bits = atoi(argv[4]);
-    seedfile = argv[5];
+    seedfile = argv[4];
 
     if (strcmp(algorithm.c_str(), "aco") == 0) {
-        ants = atoi(argv[6]);
-        alpha = atof(argv[7]);
-        beta = atof(argv[8]);
-        rho = atof(argv[9]);
-        q = atof(argv[10]);
+        ants = atoi(argv[5]);
+        alpha = atof(argv[6]);
+        beta = atof(argv[7]);
+        rho = atof(argv[8]);
+        q = atof(argv[9]);
         for (int run = 0; run < runs; run++) {
-            ACO aco = ACO(bits, ants, alpha, beta, rho, q, seedfile.c_str());
+            ACO aco = ACO(ants, alpha, beta, rho, q, seedfile.c_str());
             results.push_back(aco.run(1000));
             delay();
         }
