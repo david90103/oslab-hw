@@ -36,7 +36,7 @@ ACO::ACO(unsigned int randseed, int ants, double a, double b, double r, double q
         }
     }
     // Initialize pheromone table
-    vector<double> temp(cities.size(), 0.001);
+    vector<double> temp(cities.size(), 0.000001);
     for (int j = 0; j < cities.size(); j++) {
         pheromone.push_back(temp);
     }
@@ -131,19 +131,15 @@ void ACO::updatePheromone() {
     }
     for (int i = 0; i < ants; i++) {
         for (int j = 0; j < population[i].size() - 1; j++) {
+            // Sync a->b with b->a
             add_pheromone[population[i][j]][population[i][j + 1]] += q / fitness_values[i];
+            add_pheromone[population[i][j + 1]][population[i][j]] += q / fitness_values[i];
         }
     }
-    for (int i = 0; i < add_pheromone.size(); i++) {
-        for (int j = 0; j < add_pheromone[i].size() - 1; j++) {
-            pheromone[i][j] *= 1.00 - rho;
-            pheromone[i][j] += add_pheromone[i][j];
-        }
-    }
-    // Sync a->b with b->a
     for (int i = 0; i < pheromone.size(); i++) {
         for (int j = 0; j < pheromone[i].size(); j++) {
-            pheromone[i][j] = pheromone[j][i] = (pheromone[i][j] + pheromone[j][i]) / 2;
+            pheromone[i][j] *= 1.00 - rho;
+            pheromone[i][j] += add_pheromone[i][j];
         }
     }
 }
