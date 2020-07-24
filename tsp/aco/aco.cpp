@@ -117,7 +117,7 @@ void ACO::generatePath() {
         fitness_values[i] = score;
         if (score < bestScore) {
             bestScore = score;
-            best = path;
+            best = population[i];
         }
         result.push_back(bestScore);
     }
