@@ -24,19 +24,17 @@ class ACO {
         double beta;
         double rho;
         double q;
-        double fitness_values_sum;
         vector<double> fitness_values;
         vector<int> best;
         vector<double> result;
         double distance(vector<double> city_a, vector<double> city_b);
-        int fitness(vector<bool> arr);
         int rouletteWheel(int current_city, vector<int> candidate_city);
-        void evalPopulation(vector<bool> is_new_member);
+        double evaluate(vector<int> path);
         void generatePath();
         void updatePheromone();
     public:
-        ACO(int ants, double a, double b, double r, double q, char const *seedfile);
-        void printArray();
+        ACO(unsigned int randseed, int ants, double a, double b, double r, double q, char const *seedfile);
+        // void printArray();
         double getBestScore();
-        vector<int> run(int generations);
+        vector<double> run(int generations);
 };

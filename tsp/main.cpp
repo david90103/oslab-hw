@@ -11,17 +11,11 @@ inline bool exist(const std::string& name) {
     return false;
 }
 
-void delay() {
-    time_t start = time(NULL);
-    while (start == time(NULL))
-        ;
-}
-
 int main(int argc, char *argv[]) {
     FILE *fp;
     int file_index = 0;
     string filename;
-    vector<vector<int>> results;
+    vector<vector<double>> results;
     vector<double> avg;
 
     string algorithm = "";
@@ -52,11 +46,12 @@ int main(int argc, char *argv[]) {
         beta = atof(argv[7]);
         rho = atof(argv[8]);
         q = atof(argv[9]);
+        time_t start = time(NULL);
         for (int run = 0; run < runs; run++) {
-            ACO aco = ACO(ants, alpha, beta, rho, q, seedfile.c_str());
-            results.push_back(aco.run(1000));
-            delay();
+            ACO aco = ACO(time(NULL) + run, ants, alpha, beta, rho, q, seedfile.c_str());
+            results.push_back(aco.run(iterations));
         }
+        cout << "Time: " << time(NULL) - start << endl;
     }
 
     // Process results
