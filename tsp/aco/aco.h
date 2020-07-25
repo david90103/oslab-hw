@@ -27,7 +27,7 @@ class ACO {
         vector<int> best;
         vector<double> result;
         double distance(vector<double> city_a, vector<double> city_b);
-        int rouletteWheel(int current_city, vector<int> candidate_city);
+        int rouletteWheelwithRBP(int current_city, vector<int> candidate_city);
         double evaluate(vector<int> path);
         void generatePath();
         void updatePheromone();

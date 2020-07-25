@@ -58,10 +58,12 @@ double ACO::evaluate(vector<int> path) {
     return sum;
 }
 
-int ACO::rouletteWheel(int current_city, vector<int> candidate_city) {
+int ACO::rouletteWheelwithRBP(int current_city, vector<int> candidate_city) {
     double temp, target;
     double sum = 0;
     vector<double> table;
+    vector<int> bestThree;
+    vector<double> bestThreeProb;
     for (int i = 0; i < candidate_city.size(); i++) {
         temp = pow(pheromone[current_city][candidate_city[i]], alpha) * pow(1 / distances[current_city][candidate_city[i]], beta);
         sum += temp;
@@ -72,12 +74,44 @@ int ACO::rouletteWheel(int current_city, vector<int> candidate_city) {
     }
     target = (double) rand() / RAND_MAX;
     sum = 0;
-    for (int i = 0; i < table.size(); i++) {
-        sum += table[i];
-        if (sum > target) {
-            return candidate_city[i];
+    /**
+     * Random on Best Probability ACO
+     * If more than three city, pick three best and random choose to diversify the search
+     * Otherwise, use Roulette Wheel
+     * http://www.ijmlc.org/vol8/670-L0121F.pdf
+     */
+    /**
+     * USELESS: NO! DO NOT USE THIS
+     */
+    // if (candidate_city.size() > 3) {
+    //     bestThree.push_back(candidate_city[0]);
+    //     bestThree.push_back(candidate_city[1]);
+    //     bestThree.push_back(candidate_city[2]);
+    //     bestThreeProb.push_back(table[0]);
+    //     bestThreeProb.push_back(table[1]);
+    //     bestThreeProb.push_back(table[2]);
+    //     for (int i = 3; i < candidate_city.size(); i++) {
+    //         if (bestThreeProb[0] < bestThreeProb[1] && bestThreeProb[0] < bestThreeProb[2]) {
+    //             temp = 0;
+    //         }
+    //         else if (bestThreeProb[1] < bestThreeProb[0] && bestThreeProb[1] < bestThreeProb[2]) {
+    //             temp = 1;
+    //         }
+    //         else {
+    //             temp = 2;
+    //         }
+    //         bestThree[temp] = candidate_city[i];
+    //         bestThreeProb[temp] = table[i];
+    //     }
+    //     return bestThree[rand() % 3];
+    // } else {
+        for (int i = 0; i < table.size(); i++) {
+            sum += table[i];
+            if (sum > target) {
+                return candidate_city[i];
+            }
         }
-    }
+    // }
     return candidate_city[candidate_city.size() - 1];
 }
 
@@ -105,7 +139,7 @@ void ACO::generatePath() {
                 }
             }
             if (candidate_city.size() > 0) {
-                current = rouletteWheel(current, candidate_city);
+                current = rouletteWheelwithRBP(current, candidate_city);
             }
         }
         path.push_back(first);
@@ -162,7 +196,10 @@ vector<double> ACO::run(int iterations) {
     for (int i = 0; i < best.size(); i++) {
         cout << best[i] << " ";
     }
-    cout << " Disatance: " << bestScore << endl;
-    cout << "Done." << endl;
+    cout << " Disatance: " << bestScore;
+    if (bestScore < 440) {
+        cout << " XD";
+    }
+    cout  << endl << "Done." << endl;
     return result;
 }
