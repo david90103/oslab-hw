@@ -23,6 +23,8 @@ class ACO {
         double beta;
         double rho;
         double q;
+        const double PHEROMONE_INIT = 0.00001;
+        const double GLOBAL_SEARCH_ALPHA = 0.1;
         vector<double> fitness_values;
         vector<int> best;
         vector<double> result;

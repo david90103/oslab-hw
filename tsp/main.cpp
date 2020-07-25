@@ -50,6 +50,7 @@ int main(int argc, char *argv[]) {
         for (int run = 0; run < runs; run++) {
             ACO aco = ACO(time(NULL) + run, ants, alpha, beta, rho, q, seedfile.c_str());
             results.push_back(aco.run(iterations));
+            cout << "RUN " << run + 1 << " Done." << endl;
         }
         cout << "Time: " << time(NULL) - start << endl;
     }

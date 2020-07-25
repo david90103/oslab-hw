@@ -36,7 +36,7 @@ ACO::ACO(unsigned int randseed, int ants, double a, double b, double r, double q
         }
     }
     // Initialize pheromone table
-    vector<double> temp(cities.size(), 0.000001);
+    vector<double> temp(cities.size(), PHEROMONE_INIT);
     for (int j = 0; j < cities.size(); j++) {
         pheromone.push_back(temp);
     }
@@ -172,8 +172,28 @@ void ACO::updatePheromone() {
     }
     for (int i = 0; i < pheromone.size(); i++) {
         for (int j = 0; j < pheromone[i].size(); j++) {
-            pheromone[i][j] *= 1.00 - rho;
-            pheromone[i][j] += add_pheromone[i][j];
+            // pheromone[i][j] *= 1.00 - rho;
+            // pheromone[i][j] += add_pheromone[i][j];
+            pheromone[i][j] = (1 - rho) * pheromone[i][j] + rho * PHEROMONE_INIT;
+        }
+    }
+    /**
+     * Global Pheremone Update
+     * This update will keep the global best path information
+     * http://people.idsia.ch/~luca/acs-ec97.pdf
+     */
+    add_pheromone.clear();
+    for (int i = 0; i < cities.size(); i++) {
+        add_pheromone.push_back(temp);
+    }
+    for (int i = 0; i < best.size() - 1; i++) {
+        // Sync a->b with b->a
+        add_pheromone[best[i]][best[i + 1]] += 1 / bestScore;
+        add_pheromone[best[i + 1]][best[i]] += 1 / bestScore;
+    }
+    for (int i = 0; i < pheromone.size(); i++) {
+        for (int j = 0; j < pheromone[i].size(); j++) {
+            pheromone[i][j] = (1 - GLOBAL_SEARCH_ALPHA) * pheromone[i][j] + GLOBAL_SEARCH_ALPHA * add_pheromone[i][j];
         }
     }
 }
@@ -197,9 +217,9 @@ vector<double> ACO::run(int iterations) {
         cout << best[i] << " ";
     }
     cout << " Disatance: " << bestScore;
-    if (bestScore < 440) {
+    if (bestScore < 433) {
         cout << " XD";
     }
-    cout  << endl << "Done." << endl;
+    cout << endl;
     return result;
 }
