@@ -164,8 +164,8 @@ void ACO::updatePheromone() {
         add_pheromone.push_back(temp);
     }
     /**
-     * Pheremone Update
-     * TODO: Try to update pheremone during generating path
+     * Pheromone Update
+     * TODO: Try to update pheromone during generating path
      */
     for (int i = 0; i < ants; i++) {
         for (int j = 0; j < population[i].size() - 1; j++) {
@@ -180,7 +180,7 @@ void ACO::updatePheromone() {
         }
     }
     /**
-     * Local Pheremone Update
+     * Local Pheromone Update
      * The main goal of the local update is to diversify the
      * search performed by subsequent ants during an iteration
      * https://courses.cs.ut.ee/all/MTAT.03.238/2011K/uploads/Main/04129846.pdf
@@ -191,7 +191,7 @@ void ACO::updatePheromone() {
         }
     }
     /**
-     * Global Pheremone Update
+     * Global Pheromone Update
      * This update will keep the global best path information
      * http://people.idsia.ch/~luca/acs-ec97.pdf
      */
