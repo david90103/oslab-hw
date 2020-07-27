@@ -18,8 +18,8 @@ $ ./search.sh # 30 run, 100 iter, 20 ants, alpha 0.9, beta 5.0, rho 0.1, Q 0.9
 #### 找到最佳解 (30 run, each run 100 iterations or 2000 evaluations)
 
 - 找到最佳解：428.8
-- 30run最佳解之平均：436.3
-- 執行時間：14秒
+- 30run最佳解之平均：438.4
+- 執行時間：9秒
 
 #### 程式說明
 

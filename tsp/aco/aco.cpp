@@ -144,6 +144,17 @@ void ACO::generatePath() {
         }
         path.push_back(first);
         population.push_back(path);
+        /**
+         * Local Pheromone Update
+         * The main goal of the local update is to diversify the
+         * search performed by subsequent ants during an iteration
+         * https://courses.cs.ut.ee/all/MTAT.03.238/2011K/uploads/Main/04129846.pdf
+         */
+        for (int i = 0; i < path.size() - 1; i++) {
+            // Sync a->b with b->a
+            pheromone[path[i]][path[i + 1]] = ((1 - rho) * pheromone[path[i]][path[i + 1]]) + (rho * PHEROMONE_INIT);
+            pheromone[path[i + 1]][path[i]] = ((1 - rho) * pheromone[path[i + 1]][path[i]]) + (rho * PHEROMONE_INIT);
+        }
     }    
     // Evaluate Population
     for (int i = 0; i < ants; i++) {
@@ -164,51 +175,41 @@ void ACO::updatePheromone() {
         add_pheromone.push_back(temp);
     }
     /**
-     * Pheromone Update
-     * TODO: Try to update pheromone during generating path
+     * Pheromone Update (Ant System)
      */
-    for (int i = 0; i < ants; i++) {
-        for (int j = 0; j < population[i].size() - 1; j++) {
-            // Sync a->b with b->a
-            add_pheromone[population[i][j]][population[i][j + 1]] += q / fitness_values[i];
-            add_pheromone[population[i][j + 1]][population[i][j]] += q / fitness_values[i];
-        }
-    }
-    for (int i = 0; i < pheromone.size(); i++) {
-        for (int j = 0; j < pheromone[i].size(); j++) {
-            pheromone[i][j] = ((1 - rho) * pheromone[i][j]) + add_pheromone[i][j];
-        }
-    }
+    // for (int i = 0; i < ants; i++) {
+    //     for (int j = 0; j < population[i].size() - 1; j++) {
+    //         // Sync a->b with b->a
+    //         add_pheromone[population[i][j]][population[i][j + 1]] += q / fitness_values[i];
+    //         add_pheromone[population[i][j + 1]][population[i][j]] += q / fitness_values[i];
+    //     }
+    // }
+    // for (int i = 0; i < pheromone.size(); i++) {
+    //     for (int j = 0; j < pheromone[i].size(); j++) {
+    //         pheromone[i][j] = ((1 - rho) * pheromone[i][j]) + add_pheromone[i][j];
+    //     }
+    // }
     /**
+     * NOTE: Local pheromone update is implemented in function generatePath()
      * Local Pheromone Update
      * The main goal of the local update is to diversify the
      * search performed by subsequent ants during an iteration
      * https://courses.cs.ut.ee/all/MTAT.03.238/2011K/uploads/Main/04129846.pdf
      */
-    for (int i = 0; i < pheromone.size(); i++) {
-        for (int j = 0; j < pheromone[i].size(); j++) {
-            pheromone[i][j] = ((1 - rho) * pheromone[i][j]) + (rho * PHEROMONE_INIT);
-        }
-    }
+    // for (int i = 0; i < pheromone.size(); i++) {
+    //     for (int j = 0; j < pheromone[i].size(); j++) {
+    //         pheromone[i][j] = ((1 - rho) * pheromone[i][j]) + (rho * PHEROMONE_INIT);
+    //     }
+    // }
     /**
      * Global Pheromone Update
      * This update will keep the global best path information
      * http://people.idsia.ch/~luca/acs-ec97.pdf
      */
-    for (int i = 0; i < add_pheromone.size(); i++) {
-        for (int j = 0; j < add_pheromone[i].size(); j++) {
-            add_pheromone[i][j] = 0;
-        }
-    }
     for (int i = 0; i < best.size() - 1; i++) {
         // Sync a->b with b->a
-        add_pheromone[best[i]][best[i + 1]] += 1 / bestScore;
-        add_pheromone[best[i + 1]][best[i]] += 1 / bestScore;
-    }
-    for (int i = 0; i < pheromone.size(); i++) {
-        for (int j = 0; j < pheromone[i].size(); j++) {
-            pheromone[i][j] = (1 - GLOBAL_SEARCH_ALPHA) * pheromone[i][j] + GLOBAL_SEARCH_ALPHA * add_pheromone[i][j];
-        }
+        pheromone[best[i]][best[i + 1]] = (1 - GLOBAL_SEARCH_ALPHA) * pheromone[best[i]][best[i + 1]] + GLOBAL_SEARCH_ALPHA * 1 / bestScore;
+        pheromone[best[i + 1]][best[i]] = (1 - GLOBAL_SEARCH_ALPHA) * pheromone[best[i + 1]][best[i]] + GLOBAL_SEARCH_ALPHA * 1 / bestScore;
     }
 }
 
