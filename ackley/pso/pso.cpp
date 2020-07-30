@@ -6,12 +6,15 @@ PSO::PSO(unsigned int randseed, int population_size, double w, double c1, double
     this->population_size = population_size;
     this->w = w;
     this->c1 = c1;
-    this->c2 = c2; 
+    this->c2 = c2;
     objective_values = vector<double>(population_size, 0.0);
     individual_bests = vector<double>(population_size, 999.9);
+    // TODO: Seedfile
     // Initialize population
     for (int i = 0; i < population_size; i++) {
-        population.push_back({MIN_X + (double) rand() / RAND_MAX * (MIN_X - MIN_X), MIN_Y + (double) rand() / RAND_MAX * (MIN_Y - MIN_Y)});
+        population.push_back({MIN_X + (double) rand() / RAND_MAX * (MAX_X - MIN_X), MIN_Y + (double) rand() / RAND_MAX * (MAX_Y - MIN_Y)});
+        individual_bests_pos.push_back({0, 0});
+        velocities.push_back({0, 0});
     }
 }
 
@@ -20,27 +23,31 @@ PSO::PSO(unsigned int randseed, int population_size, double w, double c1, double
  * http://www.sfu.ca/~ssurjano/ackley.html
  */
 double PSO::evaluate(vector<double> target) {
-    /**
-     * if x2:
-            x = np.array([x1, x2])
-        else:
-            x = x1
-        d = 2
+    double sum1 = 0, sum2 = 0, exp1, exp2;
+    
+    for (int i = 0; i < DIMENSION; i++) {
+        sum1 += pow(target[i], 2);
+        sum2 += cos(2 * M_PI * target[i]);
+    }
+    exp1 = exp((-0.2) * sqrt(sum1 / DIMENSION));
+    exp2 = exp(sum2 / DIMENSION);
 
-        exp1 = np.exp((-0.2) * np.sqrt(np.sum(x**2) / d))
-        exp2 = np.exp(np.sum(np.cos(2 * np.pi * x)) / d)
-
-        return -20 * exp1 - exp2 + 20 + np.exp(1)
-    */
+    return -20 * exp1 - exp2 + 20 + exp(1);
 }
 
 void PSO::updateVelocity() {
-
+    for (int i = 0; i < population_size; i++) {
+        for (int j = 0; j < DIMENSION; j++) {
+            velocities[i][j] = w * population[i][j] + c1 * (double) rand() / RAND_MAX * (individual_bests_pos[i][j] - population[i][j]) + c2 * (double) rand() / RAND_MAX * (global_best[j] - population[i][j]);
+        }
+    }
 }
 
 void PSO::updatePosition() {
     for (int i = 0; i < population_size; i++) {
-        
+        for (int j = 0; j < DIMENSION; j++) {
+            population[i][j] += velocities[i][j];
+        }
     }
 }
 
@@ -70,9 +77,11 @@ vector<double> PSO::run(int iterations) {
         updateVelocity();
         updatePosition();
         // Record and log
-        if (iter % 10 == 0) {
-            cout << "Iteration: " << iter << " Best score: " << bestScore << endl;
-        }
+        result.push_back(bestScore);
+        // if (iter % 10 == 0) {
+        //     cout << "Iteration: " << iter << " Best score: " << bestScore << endl;
+        // }
     }
+    cout << global_best[0] << " " << global_best[1] << " Score: " << bestScore << endl;
     return result;
 }

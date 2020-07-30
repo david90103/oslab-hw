@@ -1,5 +1,5 @@
-set xrange[0:1000]
-set yrange[420:650]
-set xlabel "Number of evaluation"
-set ylabel "Objective value (Distance)"
-plot "output_aco_1.txt" w l lw 2
+set xrange[0:100]
+set yrange[0:25]
+set xlabel "Iteration"
+set ylabel "Objective value"
+plot "output_pso_1.txt" w lp

@@ -25,6 +25,7 @@ int main(int argc, char *argv[]) {
     string seedfile = "";
 
     // PSO parameters
+    int population_size = 10;
     double w = 1.0;
     double c1 = 1.0;
     double c2= 1.0;
@@ -39,11 +40,12 @@ int main(int argc, char *argv[]) {
     seedfile = argv[4];
 
     if (strcmp(algorithm.c_str(), "pso") == 0) {
-        w = atof(argv[5]);
-        c1 = atof(argv[6]);
-        c2 = atof(argv[7]);
+        population_size = atoi(argv[5]);
+        w = atof(argv[6]);
+        c1 = atof(argv[7]);
+        c2 = atof(argv[8]);
         for (int run = 0; run < runs; run++) {
-            PSO pso = PSO(time(NULL) + run, iterations, w, c1, c2, seedfile.c_str());
+            PSO pso = PSO(time(NULL) + run, population_size, w, c1, c2, seedfile.c_str());
             results.push_back(pso.run(iterations));
             cout << "RUN " << run + 1 << " Done." << endl;
         }

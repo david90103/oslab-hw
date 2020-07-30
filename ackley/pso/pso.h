@@ -1,6 +1,7 @@
+#define _USE_MATH_DEFINES
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>
+#include <cmath>
 #include <string>
 #include <cstring>
 #include <iostream>
@@ -18,10 +19,11 @@ class PSO {
         double w;
         double c1;
         double c2;
-        const double MIN_X = -30;
-        const double MAX_X = 30;
-        const double MIN_Y = -30;
-        const double MAX_Y = 30;
+        const int DIMENSION = 2;
+        const double MIN_X = -40;
+        const double MAX_X = 40;
+        const double MIN_Y = -40;
+        const double MAX_Y = 40;
         vector<vector<double>> population;
         vector<vector<double>> velocities;
         vector<double> objective_values;
