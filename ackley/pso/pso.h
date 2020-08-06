@@ -19,11 +19,8 @@ class PSO {
         double w;
         double c1;
         double c2;
-        const int DIMENSION = 2;
-        const double MIN_X = -40;
-        const double MAX_X = 40;
-        const double MIN_Y = -40;
-        const double MAX_Y = 40;
+        int dimension;
+        const double INTERVAL_RANGE = 30;
         vector<vector<double>> population;
         vector<vector<double>> velocities;
         vector<double> objective_values;
@@ -36,7 +33,7 @@ class PSO {
         void updateVelocity();
         void updatePosition();
     public:
-        PSO(unsigned int randseed, int population_size, double w, double c1, double c2, char const *seedfile);
+        PSO(unsigned int randseed, int dimension, int population_size, double w, double c1, double c2, char const *seedfile);
         double getBestScore();
         vector<double> run(int iterations);
 };

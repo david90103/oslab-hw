@@ -1,4 +1,5 @@
 #include "./pso/pso.h"
+// #include "./de/de.h"
 #include <stdio.h>
 #include <time.h>
 #include <string>
@@ -22,6 +23,7 @@ int main(int argc, char *argv[]) {
     int runs = 30;
     int bits = 100;
     int iterations = 100;
+    int dimension = 2;
     string seedfile = "";
 
     // PSO parameters
@@ -30,26 +32,44 @@ int main(int argc, char *argv[]) {
     double c1 = 1.0;
     double c2= 1.0;
 
+    // DE parameters
+    int population_size_de = 10;
+    double crossover_rate = 1.0;
+    double f = 1.0;
+
     /**
      * Parameters:
-     * pso [runs] [iterations] [seedfile] [population size] [w] [c1] [c2]
+     * pso [runs] [iterations] [dimension] [seedfile] [population size] [w] [c1] [c2]
+     * de  [runs] [iterations] [dimension] [seedfile] [population size] [crossover rate] [f]
      */
     algorithm = argv[1];
     runs = atoi(argv[2]);
     iterations = atoi(argv[3]);
-    seedfile = argv[4];
+    dimension = atoi(argv[4]);
+    seedfile = argv[5];
 
     if (strcmp(algorithm.c_str(), "pso") == 0) {
-        population_size = atoi(argv[5]);
-        w = atof(argv[6]);
-        c1 = atof(argv[7]);
-        c2 = atof(argv[8]);
+        population_size = atoi(argv[6]);
+        w = atof(argv[7]);
+        c1 = atof(argv[8]);
+        c2 = atof(argv[9]);
         for (int run = 0; run < runs; run++) {
-            PSO pso = PSO(time(NULL) + run, population_size, w, c1, c2, seedfile.c_str());
+            PSO pso = PSO(time(NULL) + run, dimension, population_size, w, c1, c2, seedfile.c_str());
             results.push_back(pso.run(iterations));
             cout << "RUN " << run + 1 << " Done." << endl;
         }
     }
+
+    // if (strcmp(algorithm.c_str(), "de") == 0) {
+    //     population_size_de = atoi(argv[6]);
+    //     crossover_rate = atof(argv[7]);
+    //     f = atoi(argv[8]);
+    //     for (int run = 0; run < runs; run++) {
+    //         DE de = DE(time(NULL) + run, population_size_de, crossover_rate, f, seedfile.c_str());
+    //         results.push_back(de.run(iterations));
+    //         cout << "RUN " << run + 1 << " Done." << endl;
+    //     }
+    // }
 
     // Process results
     for (int i = 0; i < results.size(); i++) {
