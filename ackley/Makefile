@@ -1,9 +1,9 @@
-SUBDIRS = pso
+SUBDIRS = pso de
 all:
 	for i in $(SUBDIRS); do\
 		g++ -c $$i/*.cpp;\
 	done
-	g++ -g main.cpp pso.o -o main;
+	g++ -g main.cpp pso.o de.o -o main;
 clean:
 	rm -f *.exe
 	rm -f *.o

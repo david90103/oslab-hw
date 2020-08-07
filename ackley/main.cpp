@@ -1,5 +1,5 @@
 #include "./pso/pso.h"
-// #include "./de/de.h"
+#include "./de/de.h"
 #include <stdio.h>
 #include <time.h>
 #include <string>
@@ -60,16 +60,16 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // if (strcmp(algorithm.c_str(), "de") == 0) {
-    //     population_size_de = atoi(argv[6]);
-    //     crossover_rate = atof(argv[7]);
-    //     f = atoi(argv[8]);
-    //     for (int run = 0; run < runs; run++) {
-    //         DE de = DE(time(NULL) + run, population_size_de, crossover_rate, f, seedfile.c_str());
-    //         results.push_back(de.run(iterations));
-    //         cout << "RUN " << run + 1 << " Done." << endl;
-    //     }
-    // }
+    if (strcmp(algorithm.c_str(), "de") == 0) {
+        population_size_de = atoi(argv[6]);
+        crossover_rate = atof(argv[7]);
+        f = atof(argv[8]);
+        for (int run = 0; run < runs; run++) {
+            DE de = DE(time(NULL) + run, population_size_de, dimension, crossover_rate, f, seedfile.c_str());
+            results.push_back(de.run(iterations));
+            cout << "RUN " << run + 1 << " Done." << endl;
+        }
+    }
 
     // Process results
     for (int i = 0; i < results.size(); i++) {
