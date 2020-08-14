@@ -8,11 +8,16 @@
 #include <vector>
 using namespace std;
 
+struct Chromosome {
+    vector<int> cluster_id_encoded;
+    vector<vector<double>> centroids_encoded;
+};
+
 /**
- * Genetic Algorithm
+ * Abstract class Genetic Algorithm
  */
 class GA {
-    private:
+    protected:
         int clusters;
         int encode_type;
         int population_size;
@@ -20,21 +25,49 @@ class GA {
         double bestScore;
         double crossover_rate;
         double mutation_rate;
+        vector<Chromosome> population;
         vector<vector<double>> iris;
-        vector<vector<int>> population;
+        Chromosome best;
         double fitness_values_sum;
         vector<double> fitness_values;
-        vector<int> best;
         vector<double> result;
-        double fitness(vector<int> arr);
         void evalPopulation(vector<bool> is_new_member);
-        vector<int> rouletteWheel();
-        vector<int> tournament();
-        vector<vector<int>> crossover(vector<int> father, vector<int> mother);
-        inline vector<int> mutation(vector<int> target);
+        Chromosome rouletteWheel();
+        Chromosome tournament();
+        virtual void initPopulation() = 0;
+        virtual double fitness(Chromosome arr) = 0;
+        virtual vector<Chromosome> crossover(Chromosome father, Chromosome mother) = 0;
+        virtual Chromosome mutation(Chromosome) = 0;
     public:
         GA(time_t randseed, int clusters, int encode_type, int population_s, double crossover_r, double mutation_r, char const *seedfile);
         void printArray();
         double getBestScore();
         vector<double> run(int generations);
 };
+
+/**
+ * Encode with cluster id
+ */
+class ClusterIdGA : public GA {
+    protected:
+        // vector<vector<int>> population;
+        void initPopulation();
+        double fitness(Chromosome arr);
+        vector<Chromosome> crossover(Chromosome father, Chromosome mother);
+        Chromosome mutation(Chromosome);
+    public:
+        ClusterIdGA(time_t randseed, int clusters, int encode_type, int population_s, double crossover_r, double mutation_r, char const *seedfile)
+            : GA(randseed, clusters, encode_type, population_s, crossover_r, mutation_r, seedfile) {};
+};
+
+/**
+ * Encode with centroids position
+ */
+// class CentroidsGA : public GA {
+//     protected:
+//         // vector<vector<vector<double>>> population;
+//         void initPopulation();
+//         double fitness(Chromosome arr);
+//         vector<Chromosome> crossover(Chromosome father, Chromosome mother);
+//         Chromosome mutation(Chromosome);
+// };

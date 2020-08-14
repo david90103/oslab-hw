@@ -48,8 +48,14 @@ int main(int argc, char *argv[]) {
         crossover_rate = atof(argv[8]);
         mutation_rate = atof(argv[9]);
         for (int run = 0; run < runs; run++) {
-            GA ga = GA(time(NULL) + run, clusters, encode_type, population_size, crossover_rate, mutation_rate, seedfile.c_str());
-            results.push_back(ga.run(iterations));
+            if (encode_type == 0) {
+                ClusterIdGA ga = ClusterIdGA(time(NULL) + run, clusters, encode_type, population_size, crossover_rate, mutation_rate, seedfile.c_str());
+                results.push_back(ga.run(iterations));
+            }
+            if (encode_type == 1) {
+                // ga = GA(time(NULL) + run, clusters, encode_type, population_size, crossover_rate, mutation_rate, seedfile.c_str());
+                // results.push_back(ga.run(iterations));
+            }
             cout << "RUN " << run + 1 << " Done." << endl;
         }
     }

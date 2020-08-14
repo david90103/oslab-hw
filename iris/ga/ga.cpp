@@ -28,14 +28,6 @@ GA::GA(time_t randseed, int clusters, int encode_type, int population_s, double 
         }
     }
     dimension = iris[0].size();
-    for (int i = 0; i < population_size; i++) {
-        vector<int> temp;
-        for (int j = 0; j < iris.size(); j++) {
-            temp.push_back(rand() % this->clusters);
-        }
-        population.push_back(temp);
-    }
-    evalPopulation(vector<bool>(population_size, true));
 }
 
 void GA::printArray() {
@@ -72,36 +64,9 @@ void GA::evalPopulation(vector<bool> is_new_member) {
 }
 
 /**
- * Objective function
- */
-double GA::fitness(vector<int> arr) {
-    double result = 0;
-    vector<double> temp(dimension, 0);
-    vector<vector<double>> cluster_avg(clusters, temp);
-    vector<int> cluster_count(clusters, 0);
-    for (int i = 0; i < arr.size(); i++) {
-        cluster_count[arr[i]]++;
-        for (int j = 0; j < dimension; j++) {
-            cluster_avg[arr[i]][j] += iris[i][j];
-        }
-    }
-    for (int i = 0; i < clusters; i++) {
-        for (int j = 0; j < dimension; j++) {
-            cluster_avg[i][j] /= cluster_count[i];
-        }
-    }
-    for (int i = 0; i < arr.size(); i++) {
-        for (int j = 0; j < dimension; j++) {
-            result += pow(iris[i][j] - cluster_avg[arr[i]][j], 2);
-        }
-    }
-    return result;
-}
-
-/**
  * Selection using Roulette Wheel
  */
-vector<int> GA::rouletteWheel() {
+Chromosome GA::rouletteWheel() {
     int sum = 0;
     int target = (double) rand() / RAND_MAX * fitness_values_sum;
     for (int i = 0; i < population_size; i++) {
@@ -116,7 +81,7 @@ vector<int> GA::rouletteWheel() {
 /**
  * Selection using Tournament Selection
  */
-vector<int> GA::tournament() {
+Chromosome GA::tournament() {
     int i = rand() % population_size;
     int j = rand() % population_size;
     if (fitness_values[i] >= fitness_values[j]) {
@@ -125,33 +90,15 @@ vector<int> GA::tournament() {
     return population[j];
 }
 
-/**
- * Crossover function, returns two children in a vector
- */
-vector<vector<int>> GA::crossover(vector<int> father, vector<int> mother) {
-    int pivot = rand() % father.size();
-    vector<int> child_a(father.begin(), father.begin() + pivot);
-    vector<int> child_b(mother.begin(), mother.begin() + pivot);
-    child_a.insert(child_a.end(), mother.begin() + pivot, mother.end());
-    child_b.insert(child_b.end(), father.begin() + pivot, father.end());
-    return vector<vector<int>> {child_a, child_b};
-}
-
-inline vector<int> GA::mutation(vector<int> target) {
-    int i = rand() % target.size();
-    int new_cluster = rand() % clusters;
-    while (new_cluster == target[i]) {
-        new_cluster = rand() % clusters;
-    }
-    target[i] = new_cluster;
-    return target;
-}
-
 vector<double> GA::run(int generations) {
+    // Initialization
+    initPopulation();
+    evalPopulation(vector<bool>(population_size, true));
+
     for (int gen = 1; gen <= generations; gen++) {
-        vector<int> a, b;
-        vector<vector<int>> crossover_result;
-        vector<vector<int>> new_population;
+        Chromosome a, b;
+        vector<Chromosome> crossover_result;
+        vector<Chromosome> new_population;
         // Save a boolean list to track if a chromosome is new or not, just for logging
         vector<bool> new_member_list(population_size, false);
 
@@ -187,4 +134,77 @@ vector<double> GA::run(int generations) {
     }
     cout << "Done." << endl;
     return result;
+}
+
+void ClusterIdGA::initPopulation() {
+    for (int i = 0; i < population_size; i++) {
+        Chromosome temp;
+        for (int j = 0; j < iris.size(); j++) {
+            temp.cluster_id_encoded.push_back(rand() % this->clusters);
+        }
+        population.push_back(temp);
+    }
+}
+
+// void CentroidsGA::initPopulation() {
+//     for (int i = 0; i < clusters; i++) {
+//         Chromosome temp;
+//         for (int j = 0; j < iris.size(); j++) {
+//             vector<double> t;
+//             for (int k = 0; k < dimension; k++) {
+//                 t.push_back((double) rand() / RAND_MAX);
+//             }
+//             temp.centroids_encoded.push_back(t);
+//         }
+//         population.push_back(temp);
+//     }
+// }
+
+/**
+ * Objective function
+ */
+double ClusterIdGA::fitness(Chromosome arr) {
+    double result = 0;
+    vector<double> temp(dimension, 0);
+    vector<vector<double>> cluster_avg(clusters, temp);
+    vector<int> cluster_count(clusters, 0);
+    for (int i = 0; i < arr.cluster_id_encoded.size(); i++) {
+        cluster_count[arr.cluster_id_encoded[i]]++;
+        for (int j = 0; j < dimension; j++) {
+            cluster_avg[arr.cluster_id_encoded[i]][j] += iris[i][j];
+        }
+    }
+    for (int i = 0; i < clusters; i++) {
+        for (int j = 0; j < dimension; j++) {
+            cluster_avg[i][j] /= cluster_count[i];
+        }
+    }
+    for (int i = 0; i < arr.cluster_id_encoded.size(); i++) {
+        for (int j = 0; j < dimension; j++) {
+            result += pow(iris[i][j] - cluster_avg[arr.cluster_id_encoded[i]][j], 2);
+        }
+    }
+    return result;
+}
+
+vector<Chromosome> ClusterIdGA::crossover(Chromosome father, Chromosome mother) {
+    int pivot = rand() % father.cluster_id_encoded.size();
+    Chromosome child_a;
+    Chromosome child_b;
+    child_a.cluster_id_encoded = vector<int>(father.cluster_id_encoded.begin(), father.cluster_id_encoded.begin() + pivot);
+    child_b.cluster_id_encoded = vector<int>(mother.cluster_id_encoded.begin(), mother.cluster_id_encoded.begin() + pivot);
+    child_a.cluster_id_encoded.insert(child_a.cluster_id_encoded.end(), mother.cluster_id_encoded.begin() + pivot, mother.cluster_id_encoded.end());
+    child_b.cluster_id_encoded.insert(child_b.cluster_id_encoded.end(), father.cluster_id_encoded.begin() + pivot, father.cluster_id_encoded.end());
+    return vector<Chromosome> {child_a, child_b};
+}
+
+
+inline Chromosome ClusterIdGA::mutation(Chromosome target) {
+    int i = rand() % target.cluster_id_encoded.size();
+    int new_cluster = rand() % clusters;
+    while (new_cluster == target.cluster_id_encoded[i]) {
+        new_cluster = rand() % clusters;
+    }
+    target.cluster_id_encoded[i] = new_cluster;
+    return target;
 }
