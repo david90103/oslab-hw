@@ -53,8 +53,8 @@ int main(int argc, char *argv[]) {
                 results.push_back(ga.run(iterations));
             }
             if (encode_type == 1) {
-                // ga = GA(time(NULL) + run, clusters, encode_type, population_size, crossover_rate, mutation_rate, seedfile.c_str());
-                // results.push_back(ga.run(iterations));
+                CentroidsGA ga = CentroidsGA(time(NULL) + run, clusters, encode_type, population_size, crossover_rate, mutation_rate, seedfile.c_str());
+                results.push_back(ga.run(iterations));
             }
             cout << "RUN " << run + 1 << " Done." << endl;
         }

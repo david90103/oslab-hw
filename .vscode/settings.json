@@ -39,6 +39,7 @@
         "string": "cpp",
         "vector": "cpp",
         "deque": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "climits": "cpp"
     }
 }

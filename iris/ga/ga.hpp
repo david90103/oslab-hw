@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <float.h>
+#include <climits>
 #include <string>
 #include <cstring>
 #include <iostream>
@@ -27,6 +29,7 @@ class GA {
         double mutation_rate;
         vector<Chromosome> population;
         vector<vector<double>> iris;
+        // vector<vector<double>> iris_normalized;
         Chromosome best;
         double fitness_values_sum;
         vector<double> fitness_values;
@@ -34,6 +37,7 @@ class GA {
         void evalPopulation(vector<bool> is_new_member);
         Chromosome rouletteWheel();
         Chromosome tournament();
+        double fitness_cluster_id(vector<int> arr);
         virtual void initPopulation() = 0;
         virtual double fitness(Chromosome arr) = 0;
         virtual vector<Chromosome> crossover(Chromosome father, Chromosome mother) = 0;
@@ -63,11 +67,15 @@ class ClusterIdGA : public GA {
 /**
  * Encode with centroids position
  */
-// class CentroidsGA : public GA {
-//     protected:
-//         // vector<vector<vector<double>>> population;
-//         void initPopulation();
-//         double fitness(Chromosome arr);
-//         vector<Chromosome> crossover(Chromosome father, Chromosome mother);
-//         Chromosome mutation(Chromosome);
-// };
+class CentroidsGA : public GA {
+    protected:
+        // vector<vector<vector<double>>> population;
+        void initPopulation();
+        inline double distance(vector<double> point, vector<double> centroid);
+        double fitness(Chromosome arr);
+        vector<Chromosome> crossover(Chromosome father, Chromosome mother);
+        Chromosome mutation(Chromosome);
+    public:
+        CentroidsGA(time_t randseed, int clusters, int encode_type, int population_s, double crossover_r, double mutation_r, char const *seedfile)
+            : GA(randseed, clusters, encode_type, population_s, crossover_r, mutation_r, seedfile) {};
+};

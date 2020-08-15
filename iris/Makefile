@@ -2,7 +2,7 @@ SUBDIRS = ga
 
 all:
 	for i in $(SUBDIRS); do\
-		g++ -c $$i/*.cpp;\
+		g++ -g -c $$i/*.cpp;\
 	done
 	g++ -g main.cpp ga.o -o main;
 

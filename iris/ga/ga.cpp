@@ -1,7 +1,12 @@
 #include "ga.hpp"
 
+/**
+ * Function implementation of abstract class GA
+ */
+
 GA::GA(time_t randseed, int clusters, int encode_type, int population_s, double crossover_r, double mutation_r, char const *seedfile) {
     string line;
+    // double max, min;
     srand(randseed);
     bestScore = INT_MAX;
     this->clusters = clusters;
@@ -28,6 +33,25 @@ GA::GA(time_t randseed, int clusters, int encode_type, int population_s, double 
         }
     }
     dimension = iris[0].size();
+    /**
+     * TODO: Normalize each dimension
+     */
+    // iris_normalized = iris;
+    // for (int j = 0; j < dimension; j++) {
+    //     max = -1;
+    //     min = DBL_MAX;
+    //     for (int i = 0; i < iris_normalized.size(); i++) {
+    //         if (iris_normalized[i][j] < min) {
+    //             min = iris_normalized[i][j];
+    //         }
+    //         if (iris_normalized[i][j] > max) {
+    //             max = iris_normalized[i][j];
+    //         }
+    //     }
+    //     for (int i = 0; i < iris_normalized.size(); i++) {
+    //         iris_normalized[i][j] = (iris_normalized[i][j] - min) / (max - min);
+    //     }
+    // }
 }
 
 void GA::printArray() {
@@ -39,6 +63,30 @@ void GA::printArray() {
 
 double GA::getBestScore() {
     return bestScore;
+}
+
+double GA::fitness_cluster_id(vector<int> arr) {
+    double result = 0;
+    vector<double> temp(dimension, 0);
+    vector<vector<double>> cluster_avg(clusters, temp);
+    vector<int> cluster_count(clusters, 0);
+    for (int i = 0; i < arr.size(); i++) {
+        cluster_count[arr[i]]++;
+        for (int j = 0; j < dimension; j++) {
+            cluster_avg[arr[i]][j] += iris[i][j];
+        }
+    }
+    for (int i = 0; i < clusters; i++) {
+        for (int j = 0; j < dimension; j++) {
+            cluster_avg[i][j] /= cluster_count[i];
+        }
+    }
+    for (int i = 0; i < arr.size(); i++) {
+        for (int j = 0; j < dimension; j++) {
+            result += pow(iris[i][j] - cluster_avg[arr[i]][j], 2);
+        }
+    }
+    return result;
 }
 
 /**
@@ -136,6 +184,10 @@ vector<double> GA::run(int generations) {
     return result;
 }
 
+/**
+ * Function implementation of ClusterIdGA
+ */
+
 void ClusterIdGA::initPopulation() {
     for (int i = 0; i < population_size; i++) {
         Chromosome temp;
@@ -146,45 +198,8 @@ void ClusterIdGA::initPopulation() {
     }
 }
 
-// void CentroidsGA::initPopulation() {
-//     for (int i = 0; i < clusters; i++) {
-//         Chromosome temp;
-//         for (int j = 0; j < iris.size(); j++) {
-//             vector<double> t;
-//             for (int k = 0; k < dimension; k++) {
-//                 t.push_back((double) rand() / RAND_MAX);
-//             }
-//             temp.centroids_encoded.push_back(t);
-//         }
-//         population.push_back(temp);
-//     }
-// }
-
-/**
- * Objective function
- */
 double ClusterIdGA::fitness(Chromosome arr) {
-    double result = 0;
-    vector<double> temp(dimension, 0);
-    vector<vector<double>> cluster_avg(clusters, temp);
-    vector<int> cluster_count(clusters, 0);
-    for (int i = 0; i < arr.cluster_id_encoded.size(); i++) {
-        cluster_count[arr.cluster_id_encoded[i]]++;
-        for (int j = 0; j < dimension; j++) {
-            cluster_avg[arr.cluster_id_encoded[i]][j] += iris[i][j];
-        }
-    }
-    for (int i = 0; i < clusters; i++) {
-        for (int j = 0; j < dimension; j++) {
-            cluster_avg[i][j] /= cluster_count[i];
-        }
-    }
-    for (int i = 0; i < arr.cluster_id_encoded.size(); i++) {
-        for (int j = 0; j < dimension; j++) {
-            result += pow(iris[i][j] - cluster_avg[arr.cluster_id_encoded[i]][j], 2);
-        }
-    }
-    return result;
+    return fitness_cluster_id(arr.cluster_id_encoded);
 }
 
 vector<Chromosome> ClusterIdGA::crossover(Chromosome father, Chromosome mother) {
@@ -206,5 +221,88 @@ inline Chromosome ClusterIdGA::mutation(Chromosome target) {
         new_cluster = rand() % clusters;
     }
     target.cluster_id_encoded[i] = new_cluster;
+    return target;
+}
+
+/**
+ * Function implementation of CentroidsGA
+ */
+
+void CentroidsGA::initPopulation() {
+    for (int i = 0; i < population_size; i++) {
+        Chromosome temp;
+        for (int j = 0; j < clusters; j++) {
+            vector<double> t;
+            for (int k = 0; k < dimension; k++) {
+                /**
+                 * TODO: Normalize each dimension 
+                 */
+                t.push_back((double) rand() / RAND_MAX * 8);
+            }
+            temp.centroids_encoded.push_back(t);
+        }
+        population.push_back(temp);
+    }
+}
+
+inline double CentroidsGA::distance(vector<double> point, vector<double> centroid) {
+    double sum = 0;
+    for (int i = 0; i < dimension; i++) {
+        sum += pow(point[i] - centroid[i], 2);
+    }
+    return sqrt(sum);
+}
+
+/**
+ * Fitness computation process includes 2 phases
+ * 1. Generate cluster id encoded chromosome by clustering each points to nearest centroids
+ * 2. Call the fitness function with cluster_id_encoded chromosome as parameter
+ */
+double CentroidsGA::fitness(Chromosome arr) {
+    // Generate cluster id encoded chromosome
+    int nearest_cluster;
+    double min_distance, temp;
+    for (int i = 0; i < iris.size(); i++) {
+        min_distance = DBL_MAX;
+        for (int j = 0; j < clusters; j++) {
+            temp = distance(iris[i], arr.centroids_encoded[j]);
+            if (temp < min_distance) {
+                min_distance = temp;
+                nearest_cluster = j;
+            }
+        }
+        arr.cluster_id_encoded.push_back(nearest_cluster);
+    }
+    return fitness_cluster_id(arr.cluster_id_encoded);
+}
+
+vector<Chromosome> CentroidsGA::crossover(Chromosome father, Chromosome mother) {
+    int pivot = rand() % father.centroids_encoded.size();
+    Chromosome child_a;
+    Chromosome child_b;
+    child_a.centroids_encoded = vector<vector<double>>(father.centroids_encoded.begin(), father.centroids_encoded.begin() + pivot);
+    child_b.centroids_encoded = vector<vector<double>>(mother.centroids_encoded.begin(), mother.centroids_encoded.begin() + pivot);
+    child_a.centroids_encoded.insert(child_a.centroids_encoded.end(), mother.centroids_encoded.begin() + pivot, mother.centroids_encoded.end());
+    child_b.centroids_encoded.insert(child_b.centroids_encoded.end(), father.centroids_encoded.begin() + pivot, father.centroids_encoded.end());
+    return vector<Chromosome> {child_a, child_b};
+}
+
+/**
+ * Mutation of centroids encoded chromosome
+ * for each dimension as v
+ * v = v +/- 2 * delta * v
+ * https://bit.ly/2FshxiP
+ */
+inline Chromosome CentroidsGA::mutation(Chromosome target) {
+    int i = rand() % target.centroids_encoded.size();
+    double delta;
+    for (int j = 0; j < dimension; j++) {
+        delta = (double) rand() / RAND_MAX;
+        if (rand() & 1) {
+            target.centroids_encoded[i][j] += target.centroids_encoded[i][j] + 2 * delta * target.centroids_encoded[i][j];
+        } else {
+            target.centroids_encoded[i][j] += target.centroids_encoded[i][j] - 2 * delta * target.centroids_encoded[i][j];
+        }
+    }
     return target;
 }
