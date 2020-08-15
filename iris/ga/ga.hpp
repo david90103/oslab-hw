@@ -29,7 +29,7 @@ class GA {
         double mutation_rate;
         vector<Chromosome> population;
         vector<vector<double>> iris;
-        // vector<vector<double>> iris_normalized;
+        vector<vector<double>> iris_normalized;
         Chromosome best;
         double fitness_values_sum;
         vector<double> fitness_values;

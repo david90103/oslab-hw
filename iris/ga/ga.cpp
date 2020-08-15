@@ -303,9 +303,9 @@ inline Chromosome CentroidsGA::mutation(Chromosome target) {
     for (int j = 0; j < dimension; j++) {
         delta = (double) rand() / RAND_MAX;
         if (rand() & 1) {
-            target.centroids_encoded[i][j] += target.centroids_encoded[i][j] + 2 * delta * target.centroids_encoded[i][j];
+            target.centroids_encoded[i][j] = target.centroids_encoded[i][j] + 2 * delta * target.centroids_encoded[i][j];
         } else {
-            target.centroids_encoded[i][j] += target.centroids_encoded[i][j] - 2 * delta * target.centroids_encoded[i][j];
+            target.centroids_encoded[i][j] = target.centroids_encoded[i][j] - 2 * delta * target.centroids_encoded[i][j];
         }
     }
     return target;
