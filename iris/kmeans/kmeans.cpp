@@ -2,7 +2,6 @@
 
 Kmeans::Kmeans(time_t randseed, int k, char const *seedfile) {
     string line;
-    // double max, min;
     srand(randseed);
     bestScore = INT_MAX;
     this->k = k;
@@ -23,25 +22,27 @@ Kmeans::Kmeans(time_t randseed, int k, char const *seedfile) {
         }
     }
     dimension = iris[0].size();
-    /**
-     * TODO: Normalize each dimension
-     */
-    // iris_normalized = iris;
-    // for (int j = 0; j < dimension; j++) {
-    //     max = -1;
-    //     min = DBL_MAX;
-    //     for (int i = 0; i < iris_normalized.size(); i++) {
-    //         if (iris_normalized[i][j] < min) {
-    //             min = iris_normalized[i][j];
-    //         }
-    //         if (iris_normalized[i][j] > max) {
-    //             max = iris_normalized[i][j];
-    //         }
-    //     }
-    //     for (int i = 0; i < iris_normalized.size(); i++) {
-    //         iris_normalized[i][j] = (iris_normalized[i][j] - min) / (max - min);
-    //     }
-    // }
+    iris_normalized = normalizeDataset(iris);
+}
+
+vector<vector<double>> Kmeans::normalizeDataset(vector<vector<double>> dataset) {
+    double max, min;
+    for (int j = 0; j < dimension; j++) {
+        max = -1;
+        min = DBL_MAX;
+        for (int i = 0; i < dataset.size(); i++) {
+            if (dataset[i][j] < min) {
+                min = dataset[i][j];
+            }
+            if (dataset[i][j] > max) {
+                max = dataset[i][j];
+            }
+        }
+        for (int i = 0; i < dataset.size(); i++) {
+            dataset[i][j] = (dataset[i][j] - min) / (max - min);
+        }
+    }
+    return dataset;
 }
 
 double Kmeans::getBestScore() {
@@ -79,6 +80,36 @@ double Kmeans::evaluate(vector<int> cluster_id, vector<vector<double>> cluster_a
     return sum;
 }
 
+double Kmeans::evaluateNormalized(vector<int> cluster_id, vector<vector<double>> cluster_avg) {
+    double sum = 0;
+    for (int i = 0; i < iris_normalized.size(); i++) {
+        for (int j = 0; j < dimension; j++) {
+            sum += pow(iris_normalized[i][j] - cluster_avg[cluster_id[i]][j], 2);
+        }
+    }
+    return sum;
+}
+
+vector<vector<double>> Kmeans::unormalizeCentroids(vector<vector<double>> cluster_avg) {
+    double max, min;
+    for (int j = 0; j < dimension; j++) {
+        max = -1;
+        min = DBL_MAX;
+        for (int i = 0; i < iris.size(); i++) {
+            if (iris[i][j] < min) {
+                min = iris[i][j];
+            }
+            if (iris[i][j] > max) {
+                max = iris[i][j];
+            }
+        }
+        for (int i = 0; i < cluster_avg.size(); i++) {
+            cluster_avg[i][j] = cluster_avg[i][j] * (max - min) + min;
+        }
+    }
+    return cluster_avg;
+}
+
 vector<double> Kmeans::run(int iterations) {
     double temp;
     vector<double> dim_zeros(dimension, 0);
@@ -86,22 +117,22 @@ vector<double> Kmeans::run(int iterations) {
     vector<vector<double>> cluster_avg;
     // Random pick k points as centroids
     for (int i = 0; i < k; i++) {
-        centroids.push_back(iris[rand() % iris.size()]);
+        centroids.push_back(iris_normalized[rand() % iris_normalized.size()]);
     }
     // Repeat clustering points and calculating new centroids
     for (int iter = 0; iter < iterations; iter++) {
         // Cluster points to nearest centroid
         cluster_id.clear();
-        for (int i = 0; i < iris.size(); i++) {
-            cluster_id.push_back(nearestCluster(iris[i], centroids));
+        for (int i = 0; i < iris_normalized.size(); i++) {
+            cluster_id.push_back(nearestCluster(iris_normalized[i], centroids));
         }
         // Calculate mean point
         cluster_count = vector<int>(k, 0);
         cluster_avg = vector<vector<double>>(k, dim_zeros);
-        for (int i = 0; i < iris.size(); i++) {
+        for (int i = 0; i < iris_normalized.size(); i++) {
             cluster_count[cluster_id[i]]++;
             for (int j = 0; j < dimension; j++) {
-                cluster_avg[cluster_id[i]][j] += iris[i][j];
+                cluster_avg[cluster_id[i]][j] += iris_normalized[i][j];
             }
         }
         for (int i = 0; i < k; i++) {
@@ -109,13 +140,24 @@ vector<double> Kmeans::run(int iterations) {
                 cluster_avg[i][j] /= cluster_count[i];
             }
         }
-        bestScore = evaluate(cluster_id, cluster_avg);
-        best = cluster_avg;
+        // Evaluation
+        temp = evaluate(cluster_id, unormalizeCentroids(cluster_avg));
+        if (temp < bestScore) {
+            bestScore = temp;
+            best = cluster_avg;
+        }
         // Set mean points as new centroids
         centroids = cluster_avg;
         // Save result
         result.push_back(bestScore);
     }
+    // Print cluster ids
+    // for (int i = 0; i < iris_normalized.size(); i++) {
+    //     cout << nearestCluster(iris_normalized[i], centroids) << " ";
+    // }
+    // cout << endl;
+    // Print centroids
+    best = unormalizeCentroids(best);
     for (int i = 0; i < best.size(); i++) {
         for (int j = 0; j < best[i].size(); j++) {
             cout << best[i][j] << " ";
