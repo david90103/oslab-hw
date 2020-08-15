@@ -44,7 +44,7 @@ class GA {
         virtual Chromosome mutation(Chromosome) = 0;
     public:
         GA(time_t randseed, int clusters, int encode_type, int population_s, double crossover_r, double mutation_r, char const *seedfile);
-        void printArray();
+        virtual void printBestChromosome() = 0;
         double getBestScore();
         vector<double> run(int generations);
 };
@@ -62,6 +62,7 @@ class ClusterIdGA : public GA {
     public:
         ClusterIdGA(time_t randseed, int clusters, int encode_type, int population_s, double crossover_r, double mutation_r, char const *seedfile)
             : GA(randseed, clusters, encode_type, population_s, crossover_r, mutation_r, seedfile) {};
+        void printBestChromosome();
 };
 
 /**
@@ -72,10 +73,12 @@ class CentroidsGA : public GA {
         // vector<vector<vector<double>>> population;
         void initPopulation();
         inline double distance(vector<double> point, vector<double> centroid);
+        Chromosome convertToClusterId(Chromosome);
         double fitness(Chromosome arr);
         vector<Chromosome> crossover(Chromosome father, Chromosome mother);
         Chromosome mutation(Chromosome);
     public:
         CentroidsGA(time_t randseed, int clusters, int encode_type, int population_s, double crossover_r, double mutation_r, char const *seedfile)
             : GA(randseed, clusters, encode_type, population_s, crossover_r, mutation_r, seedfile) {};
+        void printBestChromosome();
 };

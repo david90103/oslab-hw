@@ -54,13 +54,6 @@ GA::GA(time_t randseed, int clusters, int encode_type, int population_s, double 
     // }
 }
 
-void GA::printArray() {
-    for (int i = 0; i < fitness_values.size(); i++) {
-        cout << fitness_values[i] << " ";
-    }
-    cout << " Best: " << bestScore << endl;
-}
-
 double GA::getBestScore() {
     return bestScore;
 }
@@ -180,6 +173,7 @@ vector<double> GA::run(int generations) {
             cout << "Generation: " << gen << " Best score: " << bestScore << endl;
         }
     }
+    printBestChromosome();
     cout << "Done." << endl;
     return result;
 }
@@ -224,6 +218,13 @@ inline Chromosome ClusterIdGA::mutation(Chromosome target) {
     return target;
 }
 
+void ClusterIdGA::printBestChromosome() {
+    for (int i = 0; i < best.cluster_id_encoded.size(); i++) {
+        cout << best.cluster_id_encoded[i] << " ";
+    }
+    cout << endl;
+}
+
 /**
  * Function implementation of CentroidsGA
  */
@@ -253,13 +254,7 @@ inline double CentroidsGA::distance(vector<double> point, vector<double> centroi
     return sqrt(sum);
 }
 
-/**
- * Fitness computation process includes 2 phases
- * 1. Generate cluster id encoded chromosome by clustering each points to nearest centroids
- * 2. Call the fitness function with cluster_id_encoded chromosome as parameter
- */
-double CentroidsGA::fitness(Chromosome arr) {
-    // Generate cluster id encoded chromosome
+Chromosome CentroidsGA::convertToClusterId(Chromosome arr) {
     int nearest_cluster;
     double min_distance, temp;
     for (int i = 0; i < iris.size(); i++) {
@@ -273,7 +268,16 @@ double CentroidsGA::fitness(Chromosome arr) {
         }
         arr.cluster_id_encoded.push_back(nearest_cluster);
     }
-    return fitness_cluster_id(arr.cluster_id_encoded);
+    return arr;
+}
+
+/**
+ * Fitness computation process includes 2 phases
+ * 1. Generate cluster id encoded chromosome by clustering each points to nearest centroids
+ * 2. Call the fitness function with cluster_id_encoded chromosome as parameter
+ */
+double CentroidsGA::fitness(Chromosome arr) {
+    return fitness_cluster_id(convertToClusterId(arr).cluster_id_encoded);
 }
 
 vector<Chromosome> CentroidsGA::crossover(Chromosome father, Chromosome mother) {
@@ -305,4 +309,18 @@ inline Chromosome CentroidsGA::mutation(Chromosome target) {
         }
     }
     return target;
+}
+
+void CentroidsGA::printBestChromosome() {
+    best = convertToClusterId(best);
+    for (int i = 0; i < best.cluster_id_encoded.size(); i++) {
+        cout << best.cluster_id_encoded[i] << " ";
+    }
+    cout << bestScore << endl;
+    for (int i = 0; i < best.centroids_encoded.size(); i++) {
+        for (int j = 0; j < best.centroids_encoded[i].size(); j++) {
+            cout << best.centroids_encoded[i][j] << " ";
+        }
+        cout << endl;
+    }
 }
