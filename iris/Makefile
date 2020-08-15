@@ -1,10 +1,10 @@
-SUBDIRS = ga
+SUBDIRS = ga kmeans
 
 all:
 	for i in $(SUBDIRS); do\
 		g++ -g -c $$i/*.cpp;\
 	done
-	g++ -g main.cpp ga.o -o main;
+	g++ -g main.cpp ga.o kmeans.o -o main;
 
 clean:
 	rm -f *.exe

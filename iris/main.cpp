@@ -1,5 +1,5 @@
 #include "./ga/ga.hpp"
-// #include "./kmeans/kmeans.hpp"
+#include "./kmeans/kmeans.hpp"
 #include <stdio.h>
 #include <time.h>
 #include <string>
@@ -60,11 +60,11 @@ int main(int argc, char *argv[]) {
         }
     }
     if (strcmp(algorithm.c_str(), "kmeans") == 0) {
-        // for (int run = 0; run < runs; run++) {
-        //     GA ga = GA(time(NULL) + run, clusters, encode_type, population_size, crossover_rate, mutation_rate, seedfile.c_str());
-        //     results.push_back(ga.run(iterations));
-        //     cout << "RUN " << run + 1 << " Done." << endl;
-        // }
+        for (int run = 0; run < runs; run++) {
+            Kmeans km = Kmeans(time(NULL) + run, clusters, seedfile.c_str());
+            results.push_back(km.run(iterations));
+            cout << "RUN " << run + 1 << " Done." << endl;
+        }
     }
 
     // Process results
