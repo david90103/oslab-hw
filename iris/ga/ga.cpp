@@ -169,7 +169,7 @@ vector<double> GA::run(int generations) {
         
         // Record and log
         result.push_back(bestScore);
-        if (gen % 10 == 0) {
+        if (gen % 100 == 0 || gen < 10) {
             cout << "Generation: " << gen << " Best score: " << bestScore << endl;
         }
     }
@@ -281,13 +281,24 @@ double CentroidsGA::fitness(Chromosome arr) {
 }
 
 vector<Chromosome> CentroidsGA::crossover(Chromosome father, Chromosome mother) {
-    int pivot = rand() % father.centroids_encoded.size();
-    Chromosome child_a;
-    Chromosome child_b;
-    child_a.centroids_encoded = vector<vector<double>>(father.centroids_encoded.begin(), father.centroids_encoded.begin() + pivot);
-    child_b.centroids_encoded = vector<vector<double>>(mother.centroids_encoded.begin(), mother.centroids_encoded.begin() + pivot);
-    child_a.centroids_encoded.insert(child_a.centroids_encoded.end(), mother.centroids_encoded.begin() + pivot, mother.centroids_encoded.end());
-    child_b.centroids_encoded.insert(child_b.centroids_encoded.end(), father.centroids_encoded.begin() + pivot, father.centroids_encoded.end());
+    Chromosome child_a, child_b;
+    vector<vector<double>> mask;
+    vector<double> temp_a, temp_b;
+    for (int i = 0; i < clusters; i++) {
+        temp_a.clear();
+        temp_b.clear();
+        for (int j = 0; j < dimension; j++) {
+            if (rand() & 1) {
+                temp_a.push_back(father.centroids_encoded[i][j]);
+                temp_b.push_back(mother.centroids_encoded[i][j]);
+            } else {
+                temp_a.push_back(mother.centroids_encoded[i][j]);
+                temp_b.push_back(father.centroids_encoded[i][j]);
+            }
+        }
+        child_a.centroids_encoded.push_back(temp_a);
+        child_b.centroids_encoded.push_back(temp_b);
+    }
     return vector<Chromosome> {child_a, child_b};
 }
 

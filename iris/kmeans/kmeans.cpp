@@ -151,18 +151,23 @@ vector<double> Kmeans::run(int iterations) {
         // Save result
         result.push_back(bestScore);
     }
-    // Print cluster ids
-    // for (int i = 0; i < iris_normalized.size(); i++) {
-    //     cout << nearestCluster(iris_normalized[i], centroids) << " ";
-    // }
-    // cout << endl;
-    // Print centroids
-    best = unormalizeCentroids(best);
-    for (int i = 0; i < best.size(); i++) {
-        for (int j = 0; j < best[i].size(); j++) {
-            cout << best[i][j] << " ";
+    if (bestScore > 100) {
+    //     // Print cluster ids
+    //     for (int i = 0; i < iris_normalized.size(); i++) {
+    //         cout << nearestCluster(iris_normalized[i], centroids) << " ";
+    //     }
+    //     cout << endl;
+    //     // Print centroids
+        best = unormalizeCentroids(best);
+        for (int i = 0; i < best.size(); i++) {
+            for (int j = 0; j < best[i].size(); j++) {
+                cout << best[i][j] << " ";
+            }
+            cout << endl;
         }
-        cout << endl;
+        for (int i = 0; i < result.size(); i++) {
+            cout << result[i] << " ";
+        }
     }
     cout << bestScore << endl;
     cout << "Done." << endl;

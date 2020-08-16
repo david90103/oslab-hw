@@ -31,6 +31,8 @@ int main(int argc, char *argv[]) {
     double crossover_rate = 0.6;
     double mutation_rate = 0.01;
 
+    clock_t start = clock();
+
     /**
      * Parameters:
      * ga [runs] [iterations] [clusters] [seedfile] [encode type] [population size] [crossover rate] [mutation rate]
@@ -66,6 +68,8 @@ int main(int argc, char *argv[]) {
             cout << "RUN " << run + 1 << " Done." << endl;
         }
     }
+
+    cout << "Used time: " << (clock() - start) / (double) CLOCKS_PER_SEC << endl;
 
     // Process results
     for (int i = 0; i < results.size(); i++) {

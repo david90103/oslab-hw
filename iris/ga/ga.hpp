@@ -54,7 +54,6 @@ class GA {
  */
 class ClusterIdGA : public GA {
     protected:
-        // vector<vector<int>> population;
         void initPopulation();
         double fitness(Chromosome arr);
         vector<Chromosome> crossover(Chromosome father, Chromosome mother);
@@ -70,7 +69,6 @@ class ClusterIdGA : public GA {
  */
 class CentroidsGA : public GA {
     protected:
-        // vector<vector<vector<double>>> population;
         void initPopulation();
         inline double distance(vector<double> point, vector<double> centroid);
         Chromosome convertToClusterId(Chromosome);
