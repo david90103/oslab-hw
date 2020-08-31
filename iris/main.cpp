@@ -1,5 +1,6 @@
 #include "./ga/ga.hpp"
 #include "./kmeans/kmeans.hpp"
+#include "./kmeans/kmeans_pr.hpp"
 #include <stdio.h>
 #include <time.h>
 #include <string>
@@ -37,6 +38,7 @@ int main(int argc, char *argv[]) {
      * Parameters:
      * ga [runs] [iterations] [clusters] [seedfile] [encode type] [population size] [crossover rate] [mutation rate]
      * kmeans [runs] [iterations] [k] [seedfile]
+     * kmeans-pr [runs] [iterations] [k] [seedfile]
      */
     algorithm = argv[1];
     runs = atoi(argv[2]);
@@ -65,6 +67,13 @@ int main(int argc, char *argv[]) {
         for (int run = 0; run < runs; run++) {
             Kmeans km = Kmeans(time(NULL) + run, clusters, seedfile.c_str());
             results.push_back(km.run(iterations));
+            cout << "RUN " << run + 1 << " Done." << endl;
+        }
+    }
+    if (strcmp(algorithm.c_str(), "kmeans-pr") == 0) {
+        for (int run = 0; run < runs; run++) {
+            KmeansPR kmpr = KmeansPR(time(NULL) + run, clusters, seedfile.c_str());
+            results.push_back(kmpr.run(iterations));
             cout << "RUN " << run + 1 << " Done." << endl;
         }
     }

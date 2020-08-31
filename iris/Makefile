@@ -4,7 +4,7 @@ all:
 	for i in $(SUBDIRS); do\
 		g++ -g -c $$i/*.cpp;\
 	done
-	g++ -g main.cpp ga.o kmeans.o -o main;
+	g++ -g main.cpp ga.o kmeans.o kmeans_pr.o -o main;
 
 clean:
 	rm -f *.exe
