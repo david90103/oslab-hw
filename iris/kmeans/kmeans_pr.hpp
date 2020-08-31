@@ -19,8 +19,11 @@ class KmeansPR {
         int dimension;
         double bestScore;
         const double REMOVE_BOUND = 0.8;
+        const int REMOVE_AFTER_ITER = 3;
+        int removed_count;
+        vector<int> same_cluster_count;
         vector<int> cluster_id;
-        vector<bool> fixed;
+        vector<bool> removed;
         vector<vector<double>> centroids;
         vector<vector<double>> iris;
         vector<vector<double>> best;

@@ -22,6 +22,9 @@ KmeansPR::KmeansPR(time_t randseed, int k, char const *seedfile) {
         }
     }
     dimension = iris[0].size();
+    same_cluster_count = vector<int>(iris.size(), 0);
+    removed = vector<bool>(iris.size(), false);
+    removed_count = 0;
 }
 
 double KmeansPR::getBestScore() {
@@ -63,6 +66,7 @@ vector<double> KmeansPR::run(int iterations) {
     double temp;
     vector<double> dim_zeros(dimension, 0);
     vector<int> cluster_count;
+    vector<int> prev_cluster_id(iris.size(), -1);
     vector<vector<double>> cluster_avg;
     // Random pick k points as centroids
     for (int i = 0; i < k; i++) {
@@ -71,9 +75,20 @@ vector<double> KmeansPR::run(int iterations) {
     // Repeat clustering points and calculating new centroids
     for (int iter = 0; iter < iterations; iter++) {
         // Cluster points to nearest centroid
+        prev_cluster_id = cluster_id;
         cluster_id.clear();
         for (int i = 0; i < iris.size(); i++) {
-            cluster_id.push_back(nearestCluster(iris[i], centroids));
+            if (removed[i]) {
+                cluster_id.push_back(prev_cluster_id[i]);
+            } else {
+                cluster_id.push_back(nearestCluster(iris[i], centroids));
+                same_cluster_count[i]++;
+                if ((double) removed_count / iris.size() < REMOVE_BOUND && 
+                    same_cluster_count[i] >= REMOVE_AFTER_ITER) {
+                    removed[i] = true;
+                    removed_count++;
+                }
+            }
         }
         // Calculate mean point
         cluster_count = vector<int>(k, 0);
