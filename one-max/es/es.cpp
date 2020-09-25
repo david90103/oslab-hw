@@ -70,7 +70,7 @@ vector<int> ES::run() {
     while (!done()) {
         nextEnum();
         // printArray();
-        result.push_back(bestScore);
+        // result.push_back(bestScore);
         if (i % 10000000 == 0) {
             cout << "Iteration: " << i << " Best score: " << bestScore << endl;
         } 
