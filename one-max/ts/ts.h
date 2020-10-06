@@ -21,8 +21,10 @@ class TS {
         vector<bool> best;
         vector<int> result;
         vector<bool> transition();
+        vector<bool> transitionOnlyNeighbor();
         vector<bool> getNotTabuLeft(vector<bool> arr);
         vector<bool> getNotTabuRight(vector<bool> arr);
+        vector<bool> getNotTabuRandom(vector<bool> arr);
         bool isZero(vector<bool>);
         bool isMax(vector<bool>);
         int evaluate(vector<bool> arr);

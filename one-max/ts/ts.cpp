@@ -107,14 +107,29 @@ vector<bool> TS::getNotTabuRight(vector<bool> arr) {
     return arr;
 }
 
+vector<bool> TS::getNotTabuRandom(vector<bool> arr) {
+    do {
+        int i = rand() % arr.size();
+        arr[i] = !arr[i];
+    } while (inTabuList(arr));
+    return arr;
+}
+
 /**
  * Get next enum by searching neighbor that is not in tabu list
  */
-vector<bool> TS::transition() {
+vector<bool> TS::transitionOnlyNeighbor() {
     if (rand() % 2 == 0) {
         return getNotTabuLeft(arr);
     }
     return getNotTabuRight(arr);
+}
+
+/**
+ * Get next enum by random flip bit
+ */
+vector<bool> TS::transition() {
+    return getNotTabuRandom(arr);
 }
 
 bool TS::isZero(vector<bool> arr) {
@@ -137,13 +152,19 @@ bool TS::isMax(vector<bool> arr) {
 
 vector<int> TS::run(int iterations) {
     unsigned long long iter = 0;
+    int temp_score = 0;
+    vector<bool> temp_solution;
 
     for (int iter = 1; iter <= iterations; iter++) {
-        arr = transition();
-        score = evaluate(arr);
-        if (score > bestScore) {
+        temp_solution = transition();
+        temp_score = evaluate(temp_solution);
+        if (temp_score > score) {
+            arr = temp_solution;
+            score = temp_score;
+        }
+        if (temp_score > bestScore) {
             best = arr;
-            bestScore = score;
+            bestScore = temp_score;
         }
         // Update tabu list
         tabu_list.push_back(arr);
