@@ -158,6 +158,19 @@ vector<int> GA::run(int generations) {
             cout << "Generation: " << gen << " Best score: " << bestScore << endl;
         }
     }
+    // Fix the result size because crossover may cause different evaluations for each population
+    int target_evaluations = generations * population_size * crossover_rate;
+    int original_size = result.size();
+    if (result.size() > target_evaluations) {
+        for (int i = 0; i < original_size - target_evaluations; i++) {
+            result.pop_back();
+        }
+    }
+    else if (result.size() < target_evaluations) {
+        for (int i = 0; i < target_evaluations - original_size; i++) {
+            result.push_back(bestScore);
+        }
+    }
     cout << "Done." << endl;
     return result;
 }
