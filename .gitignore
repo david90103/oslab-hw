@@ -31,6 +31,7 @@
 *.out
 *.app
 main
+draw
 
 # Result files
 output*.txt

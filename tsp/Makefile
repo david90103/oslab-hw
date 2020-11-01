@@ -1,10 +1,10 @@
 SUBDIRS = aco
 all:
 	for i in $(SUBDIRS); do\
-		g++ -c $$i/*.cpp;\
+		g++ -c -O3 $$i/*.cpp;\
 	done
-	g++ -g main.cpp aco.o -o main;
-	g++ -g draw.cpp -o draw;
+	g++ -g -O3 main.cpp aco.o -o main;
+	g++ -g -O3 draw.cpp -o draw;
 clean:
 	rm -f *.exe
 	rm -f *.o
