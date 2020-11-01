@@ -147,6 +147,7 @@ vector<int> GA::run(int generations) {
         for (int i = 0; i < new_population.size(); i++) {
             if ((double) rand() / RAND_MAX < mutation_rate) {
                 new_population[i] = mutation(new_population[i]);
+                new_member_list[i] = true;
             }
         }
         // Apply population and fitness values
