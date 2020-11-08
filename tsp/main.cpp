@@ -1,4 +1,5 @@
 #include "./aco/aco.h"
+#include "./my/my.hpp"
 #include <stdio.h>
 #include <time.h>
 #include <string>
@@ -31,9 +32,15 @@ int main(int argc, char *argv[]) {
     double rho = 0.1;
     double q = 1.0;
 
+    // My algorithm parameters
+    int population_size = 20;
+    double crossover_rate = 0.7;
+    double f = 0.6;
+
     /**
      * Parameters:
      * aco [runs] [iterations] [seedfile] [ants] [alpha] [beta] [rho] [q]
+     * my [runs] [iterations] [seedfile] [population size] [crossover rate] [f]
      */
     algorithm = argv[1];
     runs = atoi(argv[2]);
@@ -50,6 +57,19 @@ int main(int argc, char *argv[]) {
         for (int run = 0; run < runs; run++) {
             ACO aco = ACO(time(NULL) + run, ants, alpha, beta, rho, q, seedfile.c_str());
             results.push_back(aco.run(iterations));
+            cout << "RUN " << run + 1 << " Done." << endl;
+        }
+        cout << "Time: " << time(NULL) - start << endl;
+    }
+
+    if (strcmp(algorithm.c_str(), "my") == 0) {
+        population_size = atoi(argv[5]);
+        crossover_rate = atof(argv[6]);
+        f = atof(argv[7]);
+        time_t start = time(NULL);
+        for (int run = 0; run < runs; run++) {
+            My my = My(time(NULL) + run, population_size, crossover_rate, f, seedfile.c_str());
+            results.push_back(my.run(iterations));
             cout << "RUN " << run + 1 << " Done." << endl;
         }
         cout << "Time: " << time(NULL) - start << endl;
