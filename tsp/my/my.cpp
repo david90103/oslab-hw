@@ -64,7 +64,10 @@ vector<int> My::convertToPath(vector<double> coordinates) {
     vector<int> candidate_cities;
     for (int i = 0; i < cities.size(); i++) 
         candidate_cities.push_back(i);
+    // Random select start index
+    // int offset = rand() % cities.size();
     for (int i = 0; i < cities.size(); i++) {
+        // vector<double> position = {coordinates[(offset + 2 * i) % cities.size()], coordinates[(offset + 2 * i + 1) % cities.size()]};
         vector<double> position = {coordinates[2 * i], coordinates[2 * i + 1]};
         int next_city = findNearest(position, candidate_cities);
         path.push_back(next_city);
@@ -84,6 +87,13 @@ double My::distance(vector<double> a, vector<double> b) {
     return sqrt(pow(a[0] - b[0], 2) + pow(a[1] - b[1], 2));
 }
 
+double My::evaluateWithDistance(vector<double> coordinates, vector<int> path) {
+    double sum_of_distance = 0.0;
+    for (int i = 0; i < cities.size(); i++)
+        sum_of_distance += distance(cities[path[i]], {coordinates[i * 2], coordinates[i * 2 + 1]});
+    return evaluate(path) + sum_of_distance / 100;
+}
+
 double My::evaluate(vector<int> path) {
     double sum = 0;
     for (int i = 0; i < path.size() - 1; i++) {
@@ -100,7 +110,13 @@ vector<vector<double>> My::mutation(vector<vector<double>> population) {
         int r2 = rand() % population_size;
         int r3 = rand() % population_size;
         for (int j = 0; j < dimension; j++) {
-            temp.push_back(population[r1][j] + f * (population[r2][j] - population[r3][j]));
+            // Boundary check
+            double t = population[r1][j] + f * (population[r2][j] - population[r3][j]);
+            if (t > 100)
+                t = 100;
+            if (t < 0)
+                t = 0;
+            temp.push_back(t);
         }
         v_arr.push_back(temp);
     }
@@ -130,6 +146,7 @@ vector<double> My::run(int iterations) {
         // Selection
         for (int i = 0; i < population_size; i++) {
             vector<int> path = convertToPath(u_arr[i]);
+            // double eval = evaluateWithDistance(u_arr[i], path);
             double eval = evaluate(path);
             if (eval <= fitness_values[i]) {
                 fitness_values[i] = eval;
@@ -144,13 +161,26 @@ vector<double> My::run(int iterations) {
         // Record and log
         result.push_back(bestScore);
         if (iter % 100 == 0) {
-            cout << "Iteration: " << iter << " Best score: " << bestScore << endl;
+            cout << "Iteration: " << iter << " Best fitness: " << bestScore << " Best score: " << evaluate(best) << endl;
         }
     }
+    cout << "==========================" << endl;
+    cout << "Found Best: " << endl;
+    // for (int i = 0; i < best.size(); i++) {
+    //     cout << distance(cities[best[i]], {global_best[i*2], global_best[i*2+1]}) << " ";
+    // }
+    // cout << endl;
     for (int i = 0; i < best.size(); i++) {
         cout << best[i] << " ";
     }
-    cout << " Disatance: " << bestScore;
+    cout << endl;
+    // for (int i = 0; i < global_best.size(); i++) {
+    //     cout << global_best[i] << " ";
+    //     if (i & 1)
+    //         cout << i/2 << endl;
+    // }
+    // cout << endl;
+    cout << "Disatance: " << bestScore;
     if (bestScore < 480) {
         cout << " XD";
     }

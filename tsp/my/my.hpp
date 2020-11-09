@@ -26,6 +26,7 @@ class My {
         int findNearest(vector<double> position, vector<int> candidate_cities);
         double distance(vector<double> city_a, vector<double> city_b);
         double evaluate(vector<int> path);
+        double evaluateWithDistance(vector<double> coordinates, vector<int> path);
         vector<int> convertToPath(vector<double> coordinates);
         vector<vector<double>> mutation(vector<vector<double>> population);
         vector<vector<double>> crossover(vector<vector<double>> population, vector<vector<double>> v_arr);
