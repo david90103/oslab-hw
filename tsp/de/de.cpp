@@ -1,6 +1,6 @@
-#include "my.hpp"
+#include "de.hpp"
 
-My::My(unsigned int randseed, int population_size, double crossover_rate, double f, char const *seedfile) {
+DE::DE(unsigned int randseed, int population_size, double crossover_rate, double f, char const *seedfile) {
     string line;
     srand(randseed);
     bestScore = DBL_MAX;
@@ -45,7 +45,7 @@ My::My(unsigned int randseed, int population_size, double crossover_rate, double
     }
 }
 
-int My::findNearest(vector<double> position, vector<int> candidate_cities) {
+int DE::findNearest(vector<double> position, vector<int> candidate_cities) {
     vector<double> distance_to_position;
     double min_distance = DBL_MAX;
     int min_city = -1;
@@ -59,7 +59,7 @@ int My::findNearest(vector<double> position, vector<int> candidate_cities) {
     return min_city;
 }
 
-vector<int> My::convertToPath(vector<double> coordinates) {
+vector<int> DE::convertToPath(vector<double> coordinates) {
     vector<int> path;
     vector<int> candidate_cities;
     for (int i = 0; i < cities.size(); i++) 
@@ -83,18 +83,18 @@ vector<int> My::convertToPath(vector<double> coordinates) {
     return path;
 }
 
-double My::distance(vector<double> a, vector<double> b) {
+double DE::distance(vector<double> a, vector<double> b) {
     return sqrt(pow(a[0] - b[0], 2) + pow(a[1] - b[1], 2));
 }
 
-double My::evaluateWithDistance(vector<double> coordinates, vector<int> path) {
+double DE::evaluateWithDistance(vector<double> coordinates, vector<int> path) {
     double sum_of_distance = 0.0;
     for (int i = 0; i < cities.size(); i++)
         sum_of_distance += distance(cities[path[i]], {coordinates[i * 2], coordinates[i * 2 + 1]});
     return evaluate(path) + sum_of_distance / 100;
 }
 
-double My::evaluate(vector<int> path) {
+double DE::evaluate(vector<int> path) {
     double sum = 0;
     for (int i = 0; i < path.size() - 1; i++) {
         sum += distances[path[i]][path[i + 1]];
@@ -102,7 +102,7 @@ double My::evaluate(vector<int> path) {
     return sum;
 }
 
-vector<vector<double>> My::mutation(vector<vector<double>> population) {
+vector<vector<double>> DE::mutation(vector<vector<double>> population) {
     vector<vector<double>> v_arr;
     for (int i = 0; i < population.size(); i++) {
         vector<double> temp;
@@ -123,7 +123,7 @@ vector<vector<double>> My::mutation(vector<vector<double>> population) {
     return v_arr;
 }
 
-vector<vector<double>> My::crossover(vector<vector<double>> population, vector<vector<double>> v_arr) {
+vector<vector<double>> DE::crossover(vector<vector<double>> population, vector<vector<double>> v_arr) {
     vector<vector<double>> u_arr;
     for (int i = 0; i < population.size(); i++) {
         vector<double> temp;
@@ -139,7 +139,7 @@ vector<vector<double>> My::crossover(vector<vector<double>> population, vector<v
     return u_arr;
 }
 
-vector<double> My::run(int iterations) {
+vector<double> DE::run(int iterations) {
     for (int iter = 1; iter <= iterations; iter++) {
         vector<vector<double>> v_arr = mutation(population);
         vector<vector<double>> u_arr = crossover(population, v_arr);

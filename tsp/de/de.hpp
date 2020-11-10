@@ -9,7 +9,7 @@
 #include <vector>
 using namespace std;
 
-class My {
+class DE {
     private:
         double bestScore;
         vector<vector<double>> population;
@@ -31,7 +31,7 @@ class My {
         vector<vector<double>> mutation(vector<vector<double>> population);
         vector<vector<double>> crossover(vector<vector<double>> population, vector<vector<double>> v_arr);
     public:
-        My(unsigned int randseed, int population_size, double crossover_rate, double f, char const *seedfile);
+        DE(unsigned int randseed, int population_size, double crossover_rate, double f, char const *seedfile);
         double getBestScore();
         vector<double> run(int generations);
 };
