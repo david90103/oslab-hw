@@ -1,4 +1,4 @@
-SUBDIRS = aco de lib
+SUBDIRS = aco lib de pso
 all:
 	for i in $(SUBDIRS); do\
 		g++ -c -O3 $$i/*.cpp;\

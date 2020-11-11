@@ -20,7 +20,7 @@ DE::DE(unsigned int randseed, int population_size, double crossover_rate, double
     for (int i = 0; i < population_size; i++) {
         t.clear();
         for (int j = 0; j < dimension; j++) {
-            t.push_back(-30 + (double) rand() / RAND_MAX * (2 * 30));
+            t.push_back(-0 + (double) rand() / RAND_MAX * (2 * 40));
         }
         population.push_back(t);
         fitness_values.push_back(evaluate(convertToPath(t)));

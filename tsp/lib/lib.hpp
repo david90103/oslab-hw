@@ -1,3 +1,6 @@
+#ifndef LIB_H_
+#define LIB_H_
+
 #include <vector>
 #include <string>
 #include <cstring>
@@ -36,3 +39,5 @@ protected:
 public:
     virtual vector<double> run(int generations) = 0;
 };
+
+#endif // LIB_H_
