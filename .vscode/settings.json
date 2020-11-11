@@ -40,6 +40,7 @@
         "vector": "cpp",
         "deque": "cpp",
         "queue": "cpp",
-        "climits": "cpp"
+        "climits": "cpp",
+        "algorithm": "cpp"
     }
 }

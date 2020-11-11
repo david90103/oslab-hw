@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
         fp_c << cities[i][0] << " " << cities[i][1] << endl;
     }
 
-    if (argc != 53) {
+    if (argc != cities.size() + 2) {
         cout << "Usage: ./draw <path>" << endl;
         return -1;
     }

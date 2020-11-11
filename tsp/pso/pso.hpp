@@ -5,6 +5,7 @@ class PSO : TSPAlgorithm {
         double w;
         double c1;
         double c2;
+        int animation_file_count;
         vector<vector<double>> velocities;
         vector<double> individual_bests;
         vector<double> objective_values;

@@ -9,6 +9,9 @@ PSO::PSO(unsigned int randseed, int population_size, double w, double c1, double
     this->c2 = c2;
     this->cities = readCitiesFromFile(seedfile);
     this->dimension = 2 * cities.size();
+    this->objective_values = vector<double>(population_size, DBL_MAX);
+    this->individual_bests = vector<double>(population_size, DBL_MAX);
+    this->animation_file_count = 0;
     // Initialize distance table
     for (int i = 0; i < cities.size(); i++) {
         distances.push_back(vector<double>());
@@ -17,15 +20,6 @@ PSO::PSO(unsigned int randseed, int population_size, double w, double c1, double
         }
     }
     // Initialize population
-    // vector<double> t;
-    // for (int i = 0; i < population_size; i++) {
-    //     t.clear();
-    //     for (int j = 0; j < dimension; j++) {
-    //         t.push_back(-30 + (double) rand() / RAND_MAX * (2 * 30));
-    //     }
-    //     population.push_back(t);
-    //     fitness_values.push_back(evaluate(convertToPath(t)));
-    // }
     vector<double> t;
     vector<double> temp(dimension, 0);
     for (int i = 0; i < population_size; i++) {
@@ -51,6 +45,10 @@ void PSO::updatePosition() {
     for (int i = 0; i < population_size; i++) {
         for (int j = 0; j < dimension; j++) {
             population[i][j] += velocities[i][j];
+            if (population[i][j] > 100)
+                population[i][j] = 100;
+            if (population[i][j] < 0)
+                population[i][j] = 0;
         }
     }
 }
@@ -61,10 +59,22 @@ void PSO::evaluatePopulation() {
         objective_values[i] = evaluate(convertToPath(population[i]));
     }
     // Update global best
-    for (int i = 0;i < population_size; i++) {
+    for (int i = 0; i < population_size; i++) {
         if (objective_values[i] < bestScore) {
             bestScore = objective_values[i];
             global_best = population[i];
+            best = convertToPath(population[i]);
+
+            // Draw animation
+            // string filename = "./output/file_" + to_string(++animation_file_count);
+            // FILE *f = fopen(filename.c_str(), "w");
+            // for (int i = 0; i < global_best.size(); i++) {
+            //     fprintf(f, "%f ", global_best[i]);
+            //     if (i & 1)
+            //         fprintf(f, "\n");
+
+            // }
+            // fclose(f);
         }
     }
     // Update individual best
@@ -82,9 +92,9 @@ vector<double> PSO::run(int iterations) {
         updatePosition();
         // Record and log
         result.push_back(bestScore);
-        // if (iter % 10 == 0) {
-        //     cout << "Iteration: " << iter << " Best score: " << bestScore << endl;
-        // }
+        if (iter % 100 == 0) {
+            cout << "Iteration: " << iter << " Best score: " << bestScore << endl;
+        }
     }
     cout << "==========================" << endl;
     cout << "Found Best: " << endl;
