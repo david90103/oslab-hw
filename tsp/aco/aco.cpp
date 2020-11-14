@@ -231,7 +231,7 @@ vector<double> ACO::run(int iterations) {
     for (int i = 0; i < best.size(); i++) {
         cout << best[i] << " ";
     }
-    cout << " Disatance: " << bestScore;
+    cout << " Distance: " << bestScore;
     if (bestScore < 433) {
         cout << " XD";
     }

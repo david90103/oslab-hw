@@ -112,7 +112,7 @@ vector<double> PSO::run(int iterations) {
     //         cout << i/2 << endl;
     // }
     // cout << endl;
-    cout << "Disatance: " << bestScore;
+    cout << "Distance: " << bestScore;
     if (bestScore < 480) {
         cout << " XD";
     }
