@@ -13,21 +13,10 @@ PSO::PSO(unsigned int randseed, int population_size, double w, double c1, double
     this->dimension = 2 * cities.size();
     this->objective_values = vector<double>(population_size, DBL_MAX);
     this->individual_bests = vector<double>(population_size, DBL_MAX);
+    this->distances = initDistances(this->cities);
+    this->distances_normalized = initDistances(this->cities_normalized);
     this->animation_file_count = 0;
-    // Initialize distance table
-    for (int i = 0; i < cities.size(); i++) {
-        distances.push_back(vector<double>());
-        for (int j = 0; j < cities.size(); j++) {
-            distances[i].push_back(distance(cities[i], cities[j]));
-        }
-    }
-    // Initialize normalized distance table
-    for (int i = 0; i < cities_normalized.size(); i++) {
-        distances_normalized.push_back(vector<double>());
-        for (int j = 0; j < cities_normalized.size(); j++) {
-            distances_normalized[i].push_back(distance(cities_normalized[i], cities_normalized[j]));
-        }
-    }
+
     // Initialize population
     vector<double> t;
     vector<double> temp(dimension, 0);
@@ -45,28 +34,6 @@ PSO::PSO(unsigned int randseed, int population_size, double w, double c1, double
         }
         velocities.push_back(t);
     }
-}
-
-vector<vector<double>> PSO::normalize(vector<vector<double>> cities) {
-    double max_x = -1;
-    double max_y = -1;
-    double min_x = DBL_MAX;
-    double min_y = DBL_MAX;
-    for (int i = 0; i < cities.size(); i++) {
-        if (cities[i][0] < min_x) 
-            min_x = cities[i][0];
-        if (cities[i][1] < min_y) 
-            min_y = cities[i][1];
-        if (cities[i][0] > max_x) 
-            max_x = cities[i][0];
-        if (cities[i][1] > max_y) 
-            max_y = cities[i][1];
-    }
-    for (int i = 0; i < cities.size(); i++) {
-        cities[i][0] = (cities[i][0] - min_x) / (max_x - min_x);
-        cities[i][1] = (cities[i][1] - min_y) / (max_y - min_y);
-    }
-    return cities;
 }
 
 void PSO::updateVelocity() {
@@ -92,15 +59,15 @@ void PSO::updatePosition() {
 void PSO::evaluatePopulation() {
     // Calculate objective values
     for (int i = 0; i < population_size; i++) {
-        vector<int> path = convertToPath(population[i], cities_normalized);
-        objective_values[i] = evaluate(path, distances_normalized);
+        vector<int> path = convertToPathNormalized(population[i]);
+        objective_values[i] = evaluateNormalized(path);
     }
     // Update global best
     for (int i = 0; i < population_size; i++) {
         if (objective_values[i] < bestFitness) {
             bestFitness = objective_values[i];
             global_best = population[i];
-            best = convertToPath(population[i], cities_normalized);
+            best = convertToPathNormalized(population[i]);
             bestScore = evaluate(best);
 
             // Draw animation

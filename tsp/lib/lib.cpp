@@ -1,6 +1,43 @@
 #include "lib.hpp"
 
 
+vector<vector<double>> TSPAlgorithm::normalize(vector<vector<double>> cities) {
+    double max_x = -1;
+    double max_y = -1;
+    double min_x = DBL_MAX;
+    double min_y = DBL_MAX;
+    for (int i = 0; i < cities.size(); i++) {
+        if (cities[i][0] < min_x) 
+            min_x = cities[i][0];
+        if (cities[i][1] < min_y) 
+            min_y = cities[i][1];
+        if (cities[i][0] > max_x) 
+            max_x = cities[i][0];
+        if (cities[i][1] > max_y) 
+            max_y = cities[i][1];
+    }
+    for (int i = 0; i < cities.size(); i++) {
+        cities[i][0] = (cities[i][0] - min_x) / (max_x - min_x);
+        cities[i][1] = (cities[i][1] - min_y) / (max_y - min_y);
+    }
+    return cities;
+}
+
+vector<vector<double>> TSPAlgorithm::initDistances(vector<vector<double>> cities) {
+    vector<vector<double>> distances;
+    for (int i = 0; i < cities.size(); i++) {
+        distances.push_back(vector<double>());
+        for (int j = 0; j < cities.size(); j++) {
+            distances[i].push_back(distance(cities[i], cities[j]));
+        }
+    }
+    return distances;
+}
+
+/**
+ * Evaluate the soluation with total travel length
+ * and distance between each sample point and city.
+ */
 double TSPAlgorithm::evaluateWithDistance(vector<double> coordinates, vector<int> path) {
     double sum_of_distance = 0.0;
     for (int i = 0; i < cities.size(); i++)
@@ -8,16 +45,20 @@ double TSPAlgorithm::evaluateWithDistance(vector<double> coordinates, vector<int
     return evaluate(path) + sum_of_distance / 100;
 }
 
-double TSPAlgorithm::evaluate(vector<int> path, vector<vector<double>> custom_distances) {
-    double sum = 0;
-    for (int i = 0; i < path.size() - 1; i++) {
-        sum += custom_distances[path[i]][path[i + 1]];
-    }
-    return sum;
-}
-
 double TSPAlgorithm::evaluate(vector<int> path) {
     return evaluate(path, distances);
+}
+
+double TSPAlgorithm::evaluateNormalized(vector<int> path) {
+    return evaluate(path, distances_normalized);
+}
+
+double TSPAlgorithm::evaluate(vector<int> path, vector<vector<double>> distances) {
+    double sum = 0;
+    for (int i = 0; i < path.size() - 1; i++) {
+        sum += distances[path[i]][path[i + 1]];
+    }
+    return sum;
 }
 
 vector<vector<double>> TSPAlgorithm::readCitiesFromFile(char const *seedfile) {
@@ -45,6 +86,10 @@ vector<vector<double>> TSPAlgorithm::readCitiesFromFile(char const *seedfile) {
 
 vector<int> TSPAlgorithm::convertToPath(vector<double> coordinates) {
     return convertToPath(coordinates, cities);
+}
+
+vector<int> TSPAlgorithm::convertToPathNormalized(vector<double> coordinates) {
+    return convertToPath(coordinates, cities_normalized);
 }
 
 vector<int> TSPAlgorithm::convertToPath(vector<double> coordinates, vector<vector<double>> cities) {

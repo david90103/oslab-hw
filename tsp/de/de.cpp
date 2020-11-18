@@ -7,20 +7,18 @@ DE::DE(unsigned int randseed, int population_size, double crossover_rate, double
     this->crossover_rate = crossover_rate;
     this->f = f;
     this->cities = readCitiesFromFile(seedfile);
+    this->cities_normalized = normalize(this->cities);
     this->dimension = 2 * cities.size();
-    // Initialize distance table
-    for (int i = 0; i < cities.size(); i++) {
-        distances.push_back(vector<double>());
-        for (int j = 0; j < cities.size(); j++) {
-            distances[i].push_back(distance(cities[i], cities[j]));
-        }
-    }
+    this->distances = initDistances(this->cities);
+    this->distances_normalized = initDistances(this->cities_normalized);
+
     // Initialize population
     vector<double> t;
     for (int i = 0; i < population_size; i++) {
         t.clear();
         for (int j = 0; j < dimension; j++) {
-            t.push_back(-0 + (double) rand() / RAND_MAX * (2 * 40));
+            t.push_back((double) rand() / RAND_MAX);
+            // t.push_back(-0 + (double) rand() / RAND_MAX * (2 * 40));
         }
         population.push_back(t);
         fitness_values.push_back(evaluate(convertToPath(t)));
@@ -37,8 +35,8 @@ vector<vector<double>> DE::mutation(vector<vector<double>> population) {
         for (int j = 0; j < dimension; j++) {
             // Boundary check
             double t = population[r1][j] + f * (population[r2][j] - population[r3][j]);
-            if (t > 100)
-                t = 100;
+            if (t > 1)
+                t = 1;
             if (t < 0)
                 t = 0;
             temp.push_back(t);
@@ -70,9 +68,8 @@ vector<double> DE::run(int iterations) {
         vector<vector<double>> u_arr = crossover(population, v_arr);
         // Selection
         for (int i = 0; i < population_size; i++) {
-            vector<int> path = convertToPath(u_arr[i]);
-            // double eval = evaluateWithDistance(u_arr[i], path);
-            double eval = evaluate(path);
+            vector<int> path = convertToPathNormalized(u_arr[i]);
+            double eval = evaluateNormalized(path);
             if (eval <= fitness_values[i]) {
                 fitness_values[i] = eval;
                 population[i] = u_arr[i];
@@ -84,7 +81,7 @@ vector<double> DE::run(int iterations) {
             }
         }
         // Record and log
-        result.push_back(bestScore);
+        result.push_back(evaluate(best));
         if (iter % 100 == 0) {
             cout << "Iteration: " << iter << " Best fitness: " << bestScore << " Best score: " << evaluate(best) << endl;
         }
@@ -99,14 +96,14 @@ vector<double> DE::run(int iterations) {
         cout << best[i] << " ";
     }
     cout << endl;
-    // for (int i = 0; i < global_best.size(); i++) {
-    //     cout << global_best[i] << " ";
-    //     if (i & 1)
-    //         cout << i/2 << endl;
-    // }
-    // cout << endl;
-    cout << "Distance: " << bestScore;
-    if (bestScore < 450) {
+    for (int i = 0; i < global_best.size(); i++) {
+        cout << global_best[i] << " ";
+        if (i & 1)
+            cout << i/2 << endl;
+    }
+    cout << endl;
+    cout << "Distance: " << evaluate(best);
+    if (evaluate(best) < 450) {
         cout << " XD";
     }
     cout << endl;
