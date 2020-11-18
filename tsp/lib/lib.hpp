@@ -31,11 +31,15 @@ protected:
     vector<int> best;
     vector<double> result;
     double evaluate(vector<int> path);
+    double evaluate(vector<int> path, vector<vector<double>> custom_distances);
     double evaluateWithDistance(vector<double> coordinates, vector<int> path);
     vector<vector<double>> readCitiesFromFile(char const *seedfile);
     vector<int> convertToPath(vector<double> coordinates);
+    vector<int> convertToPath(vector<double> coordinates, vector<vector<double>> cities);
     double distance(vector<double> city_a, vector<double> city_b);
     int findNearest(vector<double> position, vector<int> candidate_cities);
+    int findNearest(vector<double> position, vector<int> candidate_cities, vector<vector<double>> cities);
+  
 public:
     virtual vector<double> run(int generations) = 0;
 };

@@ -106,7 +106,7 @@ vector<double> DE::run(int iterations) {
     // }
     // cout << endl;
     cout << "Distance: " << bestScore;
-    if (bestScore < 480) {
+    if (bestScore < 450) {
         cout << " XD";
     }
     cout << endl;

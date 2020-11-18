@@ -8,12 +8,16 @@ double TSPAlgorithm::evaluateWithDistance(vector<double> coordinates, vector<int
     return evaluate(path) + sum_of_distance / 100;
 }
 
-double TSPAlgorithm::evaluate(vector<int> path) {
+double TSPAlgorithm::evaluate(vector<int> path, vector<vector<double>> custom_distances) {
     double sum = 0;
     for (int i = 0; i < path.size() - 1; i++) {
-        sum += distances[path[i]][path[i + 1]];
+        sum += custom_distances[path[i]][path[i + 1]];
     }
     return sum;
+}
+
+double TSPAlgorithm::evaluate(vector<int> path) {
+    return evaluate(path, distances);
 }
 
 vector<vector<double>> TSPAlgorithm::readCitiesFromFile(char const *seedfile) {
@@ -40,6 +44,10 @@ vector<vector<double>> TSPAlgorithm::readCitiesFromFile(char const *seedfile) {
 }
 
 vector<int> TSPAlgorithm::convertToPath(vector<double> coordinates) {
+    return convertToPath(coordinates, cities);
+}
+
+vector<int> TSPAlgorithm::convertToPath(vector<double> coordinates, vector<vector<double>> cities) {
     vector<int> path;
     vector<int> candidate_cities;
     for (int i = 0; i < cities.size(); i++) 
@@ -49,7 +57,7 @@ vector<int> TSPAlgorithm::convertToPath(vector<double> coordinates) {
     for (int i = 0; i < cities.size(); i++) {
         // vector<double> position = {coordinates[(offset + 2 * i) % cities.size()], coordinates[(offset + 2 * i + 1) % cities.size()]};
         vector<double> position = {coordinates[2 * i], coordinates[2 * i + 1]};
-        int next_city = findNearest(position, candidate_cities);
+        int next_city = findNearest(position, candidate_cities, cities);
         path.push_back(next_city);
         // Remove city from list
         for (vector<int>::iterator iter = candidate_cities.begin(); iter != candidate_cities.end(); iter++) {
@@ -67,7 +75,7 @@ double TSPAlgorithm::distance(vector<double> a, vector<double> b) {
     return sqrt(pow(a[0] - b[0], 2) + pow(a[1] - b[1], 2));
 }
 
-int TSPAlgorithm::findNearest(vector<double> position, vector<int> candidate_cities) {
+int TSPAlgorithm::findNearest(vector<double> position, vector<int> candidate_cities, vector<vector<double>> cities) {
     vector<double> distance_to_position;
     double min_distance = DBL_MAX;
     int min_city = -1;

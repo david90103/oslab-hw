@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 #include <math.h>
+#include <float.h>
 using namespace std;
 
 vector<int> path;
@@ -20,6 +21,28 @@ double evaluate(vector<int> path) {
         sum += distances[path[i]][path[i + 1]];
     }
     return sum;
+}
+
+vector<vector<double>> normalize(vector<vector<double>> cities) {
+    double max_x = -1;
+    double max_y = -1;
+    double min_x = DBL_MAX;
+    double min_y = DBL_MAX;
+    for (int i = 0; i < cities.size(); i++) {
+        if (cities[i][0] < min_x) 
+            min_x = cities[i][0];
+        if (cities[i][1] < min_y) 
+            min_y = cities[i][1];
+        if (cities[i][0] > max_x) 
+            max_x = cities[i][0];
+        if (cities[i][1] > max_y) 
+            max_y = cities[i][1];
+    }
+    for (int i = 0; i < cities.size(); i++) {
+        cities[i][0] = (cities[i][0] - min_x) / (max_x - min_x);
+        cities[i][1] = (cities[i][1] - min_y) / (max_y - min_y);
+    }
+    return cities;
 }
 
 int main(int argc, char *argv[]) {
@@ -44,6 +67,9 @@ int main(int argc, char *argv[]) {
             cities.push_back(split);
         }
     }
+
+    // Normalize cities
+    cities = normalize(cities);
 
     // Initialize distance table
     for (int i = 0; i < cities.size(); i++) {
