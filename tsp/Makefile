@@ -1,4 +1,4 @@
-SUBDIRS = aco lib de pso
+SUBDIRS = aco lib ga de pso
 all:
 	for i in $(SUBDIRS); do\
 		g++ -c -O3 $$i/*.cpp;\

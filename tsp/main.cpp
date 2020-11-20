@@ -1,4 +1,5 @@
 #include "./aco/aco.h"
+#include "./ga/ga.hpp"
 #include "./de/de.hpp"
 #include "./pso/pso.hpp"
 #include <stdio.h>
@@ -34,6 +35,11 @@ int main(int argc, char *argv[]) {
     double q = 1.0;
 
     int population_size = 20;
+
+    // GA parameters
+    double ga_crossover_rate = 0.7;
+    double ga_mutation_rate = 0.1;
+    string ga_crossover_method = "pmx";
     
     // DE parameters
     double crossover_rate = 0.7;
@@ -64,6 +70,19 @@ int main(int argc, char *argv[]) {
         for (int run = 0; run < runs; run++) {
             ACO aco = ACO(time(NULL) + run, ants, alpha, beta, rho, q, seedfile.c_str());
             results.push_back(aco.run(iterations));
+            cout << "RUN " << run + 1 << " Done." << endl;
+        }
+        cout << "Time: " << time(NULL) - start << endl;
+    }
+
+    if (strcmp(algorithm.c_str(), "ga") == 0) {
+        population_size = atoi(argv[5]);
+        ga_crossover_rate = atof(argv[6]);
+        ga_mutation_rate = atof(argv[7]);
+        time_t start = time(NULL);
+        for (int run = 0; run < runs; run++) {
+            GA ga = GA(time(NULL) + run, population_size, ga_crossover_rate, ga_mutation_rate, ga_crossover_method.c_str(), seedfile.c_str());
+            results.push_back(ga.run(iterations));
             cout << "RUN " << run + 1 << " Done." << endl;
         }
         cout << "Time: " << time(NULL) - start << endl;
