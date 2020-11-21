@@ -176,36 +176,12 @@ bool GA::isValidPath(vector<int> path) {
 }
 
 vector<vector<int>> GA::partiallyMappedCrossover(vector<int> father, vector<int> mother) {
-    //debug
-    // father = {0, 1, 3, 6, 4, 2, 5, 0};
-    // mother = {0, 4, 5, 3, 6, 1, 2, 0};
-    // father = {1, 2, 3, 4, 5, 6, 7, 0, 8, 1};
-    // mother = {3, 7, 5, 1, 6, 8, 2, 4, 0, 3};
-    // father = {6, 10, 11, 23, 8, 22, 7, 5, 21, 16, 14, 20, 17, 2, 24, 0, 13, 12, 1, 18, 19, 4, 15, 3, 9, 6};
-    // mother = {1, 6, 3, 5, 21, 2, 11, 20, 24, 8, 7, 22, 16, 17, 0, 14, 12, 9, 10, 4, 15, 23, 19, 18, 13, 1};
-    // cout << "------- before crossover -------" << endl;
-    // printPath(father);
-    // printPath(mother);
-
-    //debug
-    // vector<int> father_before = father;
-
     // Remove last city for crossover, the city will be added back after crossover
     father.pop_back();
     mother.pop_back();
-
     // 2 point crossover
     int point1 = rand() % father.size();
     int point2 = rand() & father.size();
-
-    //debug
-    // point1 = 1;
-    // point2 = 17;
-    // point1 = 1;
-    // point2 = 4;
-    // cout << point1 << endl;
-    // cout << point2 << endl;
-
     while (point1 == point2)
         point2 = rand() & father.size();
     if (point1 > point2) {
@@ -252,15 +228,6 @@ vector<vector<int>> GA::partiallyMappedCrossover(vector<int> father, vector<int>
     for (int j = remove_list.size() - 1; j >= 0; j--) {
         list.erase(list.begin() + remove_list[j]);
     }
-
-    // print list
-    // cout << "list: " << endl;
-    // for (int i = 0; i < list.size(); i++) {
-    //     for (int j = 0; j < list[i].size(); j++)
-    //         cout << list[i][j] << " ";
-    //     cout << endl;
-    // }
-
     // Fix the rest area
     for (int i = 0; i < father.size(); i++) {
         if (i >= point1 && i <= point2)
@@ -270,33 +237,10 @@ vector<vector<int>> GA::partiallyMappedCrossover(vector<int> father, vector<int>
             for (int j = 0; j < list.size(); j++) {
                 if (count(list[j].begin(), list[j].end(), father[i])) {
                     for (int k = 0; k < list[j].size(); k++) {
-                        // if (i  == father.size() - 1) {
-                        //     cout << "<<<< " << list[j][k] << endl;
-                        // }
                         if (!count(father.begin(), father.end(), list[j][k])) {
                             father[i] = list[j][k];
                             break;
                         }
-                        // if (k == list[j].size() - 1) {
-                        //     // print list
-                        //     cout << "list: " << endl;
-                        //     for (int m = 0; m < list.size(); m++) {
-                        //         for (int n = 0; n < list[m].size(); n++)
-                        //             cout << list[m][n] << " ";
-                        //         cout << endl;
-                        //     }
-                        //     cout << "found but all exists !!!!" << endl;
-                        //     cout << "father before:" << endl;
-                        //     for (int m = 0; m < father_before.size(); m++) {
-                        //         cout << father_before[m] << " ";
-                        //     }
-                        //     cout << endl;
-                        //     cout << "father after:" << endl;
-                        //     for (int m = 0; m < father.size(); m++) {
-                        //         cout << father[m] << " ";
-                        //     }
-                        //     cout << endl;
-                        // }
                     }
                     break;
                 }
@@ -334,7 +278,6 @@ vector<vector<int>> GA::partiallyMappedCrossover(vector<int> father, vector<int>
         cout << "mother not valid" << endl;
         printPath(mother);
     }
-
     return {father, mother};
 }
 
