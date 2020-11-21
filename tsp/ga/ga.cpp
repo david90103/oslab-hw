@@ -60,10 +60,12 @@ vector<vector<int>> GA::initPopulation(vector<vector<double>> cities) {
     vector<int> temp_path;
     for (int i = 0; i < population_size; i++) {
         temp_path.clear();
+        // Start from city 0
+        temp_path.push_back(0);
         candidate_cities.clear();
-        for (int j = 0; j < cities.size(); j++) 
+        for (int j = 1; j < cities.size(); j++) 
             candidate_cities.push_back(j);
-        for (int j = 0; j < cities.size(); j++) {
+        for (int j = 1; j < cities.size(); j++) {
             int r = rand() % candidate_cities.size();
             temp_path.push_back(candidate_cities[r]);
             candidate_cities.erase(candidate_cities.begin() + r);
@@ -231,7 +233,7 @@ vector<vector<int>> GA::partiallyMappedCrossover(vector<int> father, vector<int>
     for (int i = 0; i < father.size(); i++) {
         if (i >= point1 && i <= point2)
             continue;
-        // Check if there is a same city in selected area
+        // Check if there is a same city in selected area, +1 in second parameter will check point1 ~ point2
         if (count(father.begin() + point1, father.begin() + point2 + 1, father[i])) {
             for (int j = 0; j < list.size(); j++) {
                 if (count(list[j].begin(), list[j].end(), father[i])) {
@@ -333,8 +335,8 @@ vector<double> GA::run(int generations) {
 
         for (int i = 0; i < population_size / 2; i++) {
             // Selection
-            a = tournament();
-            b = tournament();
+            a = rouletteWheel();
+            b = rouletteWheel();
             // Crossover
             if ((double) rand() / RAND_MAX < crossover_rate) {
                 crossover_result = (this->*crossover)(a, b);
