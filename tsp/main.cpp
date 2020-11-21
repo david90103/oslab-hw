@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
     /**
      * Parameters:
      * aco [runs] [iterations] [seedfile] [ants] [alpha] [beta] [rho] [q]
+     * ga [runs] [iterations] [seedfile] [population size] [crossover rate] [mutation rate] [crossover method]
      * de [runs] [iterations] [seedfile] [population size] [crossover rate] [f]
      */
     algorithm = argv[1];
@@ -79,6 +80,7 @@ int main(int argc, char *argv[]) {
         population_size = atoi(argv[5]);
         ga_crossover_rate = atof(argv[6]);
         ga_mutation_rate = atof(argv[7]);
+        ga_crossover_method = argv[8];
         time_t start = time(NULL);
         for (int run = 0; run < runs; run++) {
             GA ga = GA(time(NULL) + run, population_size, ga_crossover_rate, ga_mutation_rate, ga_crossover_method.c_str(), seedfile.c_str());

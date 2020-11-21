@@ -41,6 +41,7 @@
         "deque": "cpp",
         "queue": "cpp",
         "climits": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "fstream": "cpp"
     }
 }

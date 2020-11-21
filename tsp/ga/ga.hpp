@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <vector>
+#include <algorithm>
 #include <float.h>
 #include <math.h>
 using namespace std;
@@ -32,7 +33,9 @@ private:
     vector<vector<int>> initPopulation(vector<vector<double>> cities);
     double distance(vector<double> a, vector<double> b);
     int fitness(vector<int> arr);
-    void evalPopulation(vector<int> is_new_member);
+    void evalPopulation(vector<bool> is_new_member);
+    bool isValidPath(vector<int> path);
+    void printPath(vector<int> path);
     vector<int> rouletteWheel();
     vector<int> tournament();
     vector<vector<int>> (GA::*crossover)(vector<int>, vector<int>);
