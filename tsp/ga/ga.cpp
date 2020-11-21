@@ -145,7 +145,6 @@ vector<int> GA::tournament() {
 }
 
 bool GA::isValidPath(vector<int> path) {
-    // vector<int> check(7, 0);
     vector<int> check(cities.size(), 0);
     if (path.front() != path.back()) {
         cout << "front != back" << endl;
@@ -265,7 +264,6 @@ vector<vector<int>> GA::partiallyMappedCrossover(vector<int> father, vector<int>
             }
         }
     }
-
     // Add the last city back according to crossover result
     father.push_back(father.front());
     mother.push_back(mother.front());
@@ -282,7 +280,28 @@ vector<vector<int>> GA::partiallyMappedCrossover(vector<int> father, vector<int>
 }
 
 vector<vector<int>> GA::cycleCrossover(vector<int> father, vector<int> mother) {
-    cout << "cx" << endl;
+    vector<bool> path_in_cycle(father.size());
+    // Loop through path to build cycle
+    int start_city = father[0];
+    int current_city = mother[0];
+    path_in_cycle[0] = true;
+    while (current_city != start_city) {
+        for (int i = 0; i < father.size(); i++) {
+            if (father[i] == current_city) {
+                path_in_cycle[i] = true;
+                current_city = mother[i];
+                break;
+            }
+        }
+    }
+    // Swap cities not in cycle
+    for (int i = 0; i < father.size(); i++) {
+        if (!path_in_cycle[i]) {
+            int temp = father[i];
+            father[i] = mother[i];
+            mother[i] = temp;
+        }
+    }
     return {father, mother};
 }
 
@@ -291,17 +310,16 @@ vector<vector<int>> GA::orderCrossover(vector<int> father, vector<int> mother) {
     return {father, mother};
 }
 
+/**
+ * Mutation
+ * Random swap 2 neighbor cities
+ */
 inline vector<int> GA::mutation(vector<int> target) {
     // We don't want to mutate the first and last position
-    int i = rand() % target.size();
-    while (i == 0 || i == target.size() - 1)
-        i = rand() % target.size();
-    int j = rand() % target.size();
-    while (j == 0 || j == target.size() - 1 || j == i)
-        j = rand() % target.size();
+    int i = rand() % (target.size() - 3) + 1;
     int temp = target[i];
-    target[i] = target[j];
-    target[j] = temp;
+    target[i] = target[i + 1];
+    target[i + 1] = temp;
     return target;
 }
 
@@ -315,8 +333,8 @@ vector<double> GA::run(int generations) {
 
         for (int i = 0; i < population_size / 2; i++) {
             // Selection
-            a = rouletteWheel();
-            b = rouletteWheel();
+            a = tournament();
+            b = tournament();
             // Crossover
             if ((double) rand() / RAND_MAX < crossover_rate) {
                 crossover_result = (this->*crossover)(a, b);
@@ -339,7 +357,7 @@ vector<double> GA::run(int generations) {
         evalPopulation(new_member_list);
         
         // Record and log
-        if (gen % 10 == 0) {
+        if (gen % 100 == 0 || gen < 20) {
             cout << "Generation: " << gen << " Best score: " << bestScore << endl;
         }
     }
@@ -355,6 +373,16 @@ vector<double> GA::run(int generations) {
         for (int i = 0; i < target_evaluations - original_size; i++) {
             result.push_back(bestScore);
         }
+    }
+    cout << "==========================" << endl;
+    cout << "Found Best: " << endl;
+    for (int i = 0; i < best.size(); i++) {
+        cout << best[i] << " ";
+    }
+    cout << endl;
+    cout << "Distance: " << bestScore << endl;
+    if (bestScore < 450) {
+        cout << " XD";
     }
     cout << "Done." << endl;
     return result;
