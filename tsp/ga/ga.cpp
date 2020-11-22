@@ -308,8 +308,54 @@ vector<vector<int>> GA::cycleCrossover(vector<int> father, vector<int> mother) {
 }
 
 vector<vector<int>> GA::orderCrossover(vector<int> father, vector<int> mother) {
-    cout << "ox" << endl;
-    return {father, mother};
+    // Select a range of fixed path
+    int point1 = rand() % father.size();
+    int point2 = rand() % father.size();
+    while (point1 == point2)
+        point2 = rand() & father.size();
+    if (point1 > point2) {
+        int t = point2;
+        point2 = point1;
+        point1 = t;
+    }
+    // Loop through parents and swap not fixed cities
+    vector<int> child1, child2;
+    for (int i = 0; i < father.size(); i++) {
+        // Keep the start city
+        if (i == 0 || i == father.size() - 1) {
+            child1.push_back(father[0]);
+            child2.push_back(mother[0]);
+        }
+        else if (i < point1 || i > point2) {
+            child1.push_back(-1);
+            child2.push_back(-1);
+        }
+        else {
+            child1.push_back(father[i]);
+            child2.push_back(mother[i]);
+        }
+    }
+    for (int i = 0; i < child1.size(); i++) {
+        if (child1[i] == -1) {
+            for (int j = 0; j < mother.size(); j++) {
+                if (!count(child1.begin(), child1.end(), mother[j])) {
+                    child1[i] = mother[j];
+                    break;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < child2.size(); i++) {
+        if (child2[i] == -1) {
+            for (int j = 0; j < father.size(); j++) {
+                if (!count(child2.begin(), child2.end(), father[j])) {
+                    child2[i] = father[j];
+                    break;
+                }
+            }
+        }
+    }
+    return {child1, child2};
 }
 
 /**
@@ -337,6 +383,8 @@ vector<double> GA::run(int generations) {
             // Selection
             a = rouletteWheel();
             b = rouletteWheel();
+            // a = tournament();
+            // b = tournament();
             // Crossover
             if ((double) rand() / RAND_MAX < crossover_rate) {
                 crossover_result = (this->*crossover)(a, b);
