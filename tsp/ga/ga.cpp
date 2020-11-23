@@ -6,7 +6,6 @@ GA::GA(int bits, int population_s, double crossover_r, double mutation_r, char c
     population_size = population_s;
     crossover_rate = crossover_r;
     mutation_rate = mutation_r;
-    fitness_values_sum = 0;
     fitness_values = vector<double>(population_size, DBL_MAX);
     cities = readCitiesFromFile(seedfile);
     distances = initDistances(cities);
@@ -88,16 +87,14 @@ double GA::distance(vector<double> a, vector<double> b) {
 
 /**
  * Evaluate every chromosome in population
- * Parameter is_new_member is a intean list to track if a chromosome
+ * Parameter is_new_member is a boolean list to track if a chromosome
  * in population is created by crossover or directly from parents
  */
 void GA::evalPopulation(vector<bool> is_new_member) {
-    int temp;
-    fitness_values_sum = 0;
+    double temp;
     for (int i = 0; i < population.size(); i++) {
         temp = fitness(population[i]);
         fitness_values[i] = temp;
-        fitness_values_sum += temp;
         if (fitness_values[i] < bestScore) {
             bestScore = fitness_values[i];
             best = population[i];
@@ -113,9 +110,8 @@ void GA::evalPopulation(vector<bool> is_new_member) {
  */
 int GA::fitness(vector<int> path) {
     double sum = 0;
-    for (int i = 0; i < path.size() - 1; i++) {
+    for (int i = 0; i < path.size() - 1; i++)
         sum += distances[path[i]][path[i + 1]];
-    }
     return sum;
 }
 
@@ -123,10 +119,15 @@ int GA::fitness(vector<int> path) {
  * Selection using Roulette Wheel
  */
 vector<int> GA::rouletteWheel() {
-    int sum = 0;
-    int target = rand() % fitness_values_sum;
+    double sum = 0;
+    vector<double> temp = fitness_values;
+    for (int i = 0; i < temp.size(); i++)
+        sum += 1 / temp[i];
+    for (int i = 0; i < temp.size(); i++) 
+        temp[i] = ((1 / temp[i]) / sum); // Shorter distance is better
+    int target = (double) rand() / RAND_MAX;
     for (int i = 0; i < population_size; i++) {
-        sum += fitness_values[i];
+        sum += temp[i];
         if (sum >= target) {
             return population[i];
         }
@@ -140,7 +141,7 @@ vector<int> GA::rouletteWheel() {
 vector<int> GA::tournament() {
     int i = rand() % population_size;
     int j = rand() % population_size;
-    if (fitness_values[i] >= fitness_values[j]) {
+    if (fitness_values[i] < fitness_values[j]) {
         return population[i];
     }
     return population[j];
@@ -381,10 +382,10 @@ vector<double> GA::run(int generations) {
 
         for (int i = 0; i < population_size / 2; i++) {
             // Selection
-            a = rouletteWheel();
-            b = rouletteWheel();
-            // a = tournament();
-            // b = tournament();
+            // a = rouletteWheel();
+            // b = rouletteWheel();
+            a = tournament();
+            b = tournament();
             // Crossover
             if ((double) rand() / RAND_MAX < crossover_rate) {
                 crossover_result = (this->*crossover)(a, b);

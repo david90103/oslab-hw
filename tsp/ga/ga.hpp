@@ -24,7 +24,6 @@ private:
     vector<vector<double>> cities;
     vector<vector<double>> distances;
     vector<vector<int>> population;
-    int fitness_values_sum;
     vector<double> fitness_values;
     vector<int> best;
     vector<double> result;
