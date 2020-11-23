@@ -365,10 +365,13 @@ vector<vector<int>> GA::orderCrossover(vector<int> father, vector<int> mother) {
  */
 inline vector<int> GA::mutation(vector<int> target) {
     // We don't want to mutate the first and last position
-    int i = rand() % (target.size() - 3) + 1;
+    int i = rand() % (target.size() - 2) + 1;
+    int j = rand() % (target.size() - 2) + 1;
+    while (i == j)
+        j = rand() % (target.size() - 2) + 1;
     int temp = target[i];
-    target[i] = target[i + 1];
-    target[i + 1] = temp;
+    target[i] = target[j];
+    target[j] = temp;
     return target;
 }
 

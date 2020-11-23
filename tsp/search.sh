@@ -4,4 +4,4 @@
 # ./main de 30 20000 "data/eil51.tsp" 51 0.8 0.7
 # ./main pso 1 1000 "data/eil51.tsp" 20 0.4 0.6 0.7 # bound 0 to 100
 # ./main pso 1 10000 "data/eil51.tsp" 30 0.1 0.2 0.1 # bound 30 to 60
-./main ga 1 1000 "data/eil51.tsp" 100 0.9 0.1 pmx
+./main ga 1 5000 "data/eil51.tsp" 100 0.8 0.1 ox
