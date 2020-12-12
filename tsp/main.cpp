@@ -1,6 +1,7 @@
 #include "./aco/aco.h"
 #include "./ga/ga.hpp"
 #include "./de/de.hpp"
+#include "./de/de1d.hpp"
 #include "./pso/pso.hpp"
 #include <stdio.h>
 #include <time.h>
@@ -98,6 +99,19 @@ int main(int argc, char *argv[]) {
         for (int run = 0; run < runs; run++) {
             DE de = DE(time(NULL) + run, population_size, crossover_rate, f, seedfile.c_str());
             results.push_back(de.run(iterations));
+            cout << "RUN " << run + 1 << " Done." << endl;
+        }
+        cout << "Time: " << time(NULL) - start << endl;
+    }
+
+    if (strcmp(algorithm.c_str(), "de1d") == 0) {
+        population_size = atoi(argv[5]);
+        crossover_rate = atof(argv[6]);
+        f = atof(argv[7]);
+        time_t start = time(NULL);
+        for (int run = 0; run < runs; run++) {
+            DE1D de1d = DE1D(time(NULL) + run, population_size, crossover_rate, f, seedfile.c_str());
+            results.push_back(de1d.run(iterations));
             cout << "RUN " << run + 1 << " Done." << endl;
         }
         cout << "Time: " << time(NULL) - start << endl;

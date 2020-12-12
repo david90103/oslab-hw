@@ -39,6 +39,11 @@ protected:
     double evaluate(vector<int> path, vector<vector<double>> distances);
     double evaluateWithDistance(vector<double> coordinates, vector<int> path);
     vector<vector<double>> readCitiesFromFile(char const *seedfile);
+    /**
+     * Build the final path which will be passed to evaluation.
+     * In 2d sample points encoding, we pick the nearest not traveled city
+     * as the path city for each sample points.
+     */
     vector<int> convertToPath(vector<double> coordinates);
     vector<int> convertToPath(vector<double> coordinates, vector<vector<double>> cities);
     vector<int> convertToPathNormalized(vector<double> coordinates);

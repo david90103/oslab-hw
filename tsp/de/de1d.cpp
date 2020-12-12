@@ -1,6 +1,6 @@
-#include "de.hpp"
+#include "de1d.hpp"
 
-DE::DE(unsigned int randseed, int population_size, double crossover_rate, double f, char const *seedfile) {
+DE1D::DE1D(unsigned int randseed, int population_size, double crossover_rate, double f, char const *seedfile) {
     srand(randseed);
     this->bestScore = DBL_MAX;
     this->population_size = population_size;
@@ -8,7 +8,7 @@ DE::DE(unsigned int randseed, int population_size, double crossover_rate, double
     this->f = f;
     this->cities = readCitiesFromFile(seedfile);
     this->cities_normalized = normalize(this->cities);
-    this->dimension = 2 * cities.size();
+    this->dimension = cities.size();
     this->distances = initDistances(this->cities);
     this->distances_normalized = initDistances(this->cities_normalized);
 
@@ -25,7 +25,7 @@ DE::DE(unsigned int randseed, int population_size, double crossover_rate, double
     }
 }
 
-vector<vector<double>> DE::mutation(vector<vector<double>> population) {
+vector<vector<double>> DE1D::mutation(vector<vector<double>> population) {
     vector<vector<double>> v_arr;
     for (int i = 0; i < population.size(); i++) {
         vector<double> temp;
@@ -35,10 +35,10 @@ vector<vector<double>> DE::mutation(vector<vector<double>> population) {
         for (int j = 0; j < dimension; j++) {
             // Boundary check
             double t = population[r1][j] + f * (population[r2][j] - population[r3][j]);
-            if (t > 1)
-                t = 1;
-            if (t < 0)
-                t = 0;
+            // if (t > 10)
+            //     t = 10;
+            // if (t < -10)
+            //     t = -10;
             temp.push_back(t);
         }
         v_arr.push_back(temp);
@@ -46,7 +46,7 @@ vector<vector<double>> DE::mutation(vector<vector<double>> population) {
     return v_arr;
 }
 
-vector<vector<double>> DE::crossover(vector<vector<double>> population, vector<vector<double>> v_arr) {
+vector<vector<double>> DE1D::crossover(vector<vector<double>> population, vector<vector<double>> v_arr) {
     vector<vector<double>> u_arr;
     for (int i = 0; i < population.size(); i++) {
         vector<double> temp;
@@ -62,14 +62,16 @@ vector<vector<double>> DE::crossover(vector<vector<double>> population, vector<v
     return u_arr;
 }
 
-vector<double> DE::run(int iterations) {
+vector<double> DE1D::run(int iterations) {
     for (int iter = 1; iter <= iterations; iter++) {
         vector<vector<double>> v_arr = mutation(population);
         vector<vector<double>> u_arr = crossover(population, v_arr);
         // Selection
         for (int i = 0; i < population_size; i++) {
-            vector<int> path = convertToPathNormalized(u_arr[i]);
-            double eval = evaluateNormalized(path);
+            // vector<int> path = convertToPathNormalized(u_arr[i]);
+            // double eval = evaluateNormalized(path);
+            vector<int> path = convertToPath(u_arr[i]);
+            double eval = evaluate(path);
             if (eval <= fitness_values[i]) {
                 fitness_values[i] = eval;
                 population[i] = u_arr[i];
@@ -79,10 +81,11 @@ vector<double> DE::run(int iterations) {
                 global_best = u_arr[i];
                 best = path;
             }
-            result.push_back(evaluate(best));
+            // Uncomment this to save result in every evaluation
+            // result.push_back(evaluate(best));
         }
         // Record and log
-        // result.push_back(evaluate(best));
+        result.push_back(evaluate(best));
         if (iter % 100 == 0) {
             cout << "Iteration: " << iter << " Best fitness: " << bestScore << " Best score: " << evaluate(best) << endl;
         }
@@ -99,12 +102,11 @@ vector<double> DE::run(int iterations) {
     cout << endl;
     for (int i = 0; i < global_best.size(); i++) {
         cout << global_best[i] << " ";
-        if (i & 1)
-            cout << i/2 << endl;
+        cout << i << endl;
     }
     cout << endl;
     cout << "Distance: " << evaluate(best);
-    if (evaluate(best) < 450) {
+    if (evaluate(best) < 440) {
         cout << " XD";
     }
     cout << endl;
