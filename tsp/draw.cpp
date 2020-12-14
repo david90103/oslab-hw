@@ -46,7 +46,7 @@ vector<vector<double>> normalize(vector<vector<double>> cities) {
 }
 
 int main(int argc, char *argv[]) {
-    ifstream fp("data/eil51.tsp");
+    ifstream fp("data/pr1002.tsp");
     ofstream fp_c("output_cities.txt");
     ofstream fp_p("output_path.txt");
     string line;

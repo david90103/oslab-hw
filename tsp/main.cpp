@@ -3,6 +3,7 @@
 #include "./de/de.hpp"
 #include "./de/de1d.hpp"
 #include "./pso/pso.hpp"
+#include "./pso/pso1d.hpp"
 #include <stdio.h>
 #include <time.h>
 #include <string>
@@ -126,6 +127,20 @@ int main(int argc, char *argv[]) {
         for (int run = 0; run < runs; run++) {
             PSO pso = PSO(time(NULL) + run, population_size, w, c1, c2, seedfile.c_str());
             results.push_back(pso.run(iterations));
+            cout << "RUN " << run + 1 << " Done." << endl;
+        }
+        cout << "Time: " << time(NULL) - start << endl;
+    }
+
+    if (strcmp(algorithm.c_str(), "pso1d") == 0) {
+        population_size = atoi(argv[5]);
+        w = atof(argv[6]);
+        c1 = atof(argv[7]);
+        c2 = atof(argv[8]);
+        time_t start = time(NULL);
+        for (int run = 0; run < runs; run++) {
+            PSO1D pso1d = PSO1D(time(NULL) + run, population_size, w, c1, c2, seedfile.c_str());
+            results.push_back(pso1d.run(iterations));
             cout << "RUN " << run + 1 << " Done." << endl;
         }
         cout << "Time: " << time(NULL) - start << endl;

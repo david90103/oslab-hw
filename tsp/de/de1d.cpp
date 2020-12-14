@@ -70,7 +70,26 @@ vector<double> DE1D::run(int iterations) {
         for (int i = 0; i < population_size; i++) {
             // vector<int> path = convertToPathNormalized(u_arr[i]);
             // double eval = evaluateNormalized(path);
+            // u_arr[i][0] = DBL_MAX;
+            // mumutation Σ(`･ω･Ⅲ) Σ(`･ω･Ⅲ)
+            // random swap priority
+            // if ((double) rand() / RAND_MAX < 30 / iter) {
+            //     int a = rand() % (u_arr[i].size() - 2) + 1;
+            //     int b = rand() % (u_arr[i].size() - 2) + 1;
+            //     double tt = u_arr[i][a];
+            //     u_arr[i][a] = u_arr[i][b];
+            //     u_arr[i][b] = tt;
+            // }
             vector<int> path = convertToPath(u_arr[i]);
+            // mumutation Σ(`･ω･Ⅲ) Σ(`･ω･Ⅲ)
+            // random swap path
+            // if ((double) rand() / RAND_MAX < 30 / iter) {
+            //     int a = rand() % (path.size() - 2) + 1;
+            //     int b = rand() % (path.size() - 2) + 1;
+            //     int tt = path[a];
+            //     path[a] = path[b];
+            //     path[b] = tt;
+            // }
             double eval = evaluate(path);
             if (eval <= fitness_values[i]) {
                 fitness_values[i] = eval;
