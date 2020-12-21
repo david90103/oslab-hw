@@ -1,5 +1,6 @@
 #include "./aco/aco.h"
 #include "./ga/ga.hpp"
+#include "./ga/gap.hpp"
 #include "./de/de.hpp"
 #include "./de/de1d.hpp"
 #include "./pso/pso.hpp"
@@ -55,8 +56,10 @@ int main(int argc, char *argv[]) {
     /**
      * Parameters:
      * aco [runs] [iterations] [seedfile] [ants] [alpha] [beta] [rho] [q]
-     * ga [runs] [iterations] [seedfile] [population size] [crossover rate] [mutation rate] [crossover method]
-     * de [runs] [iterations] [seedfile] [population size] [crossover rate] [f]
+     * ga  [runs] [iterations] [seedfile] [population size] [crossover rate] [mutation rate] [crossover method]
+     * gap [runs] [iterations] [seedfile] [population size] [crossover rate] [mutation rate] [crossover method]
+     * de  [runs] [iterations] [seedfile] [population size] [crossover rate] [f]
+     * pso
      */
     algorithm = argv[1];
     runs = atoi(argv[2]);
@@ -87,6 +90,20 @@ int main(int argc, char *argv[]) {
         for (int run = 0; run < runs; run++) {
             GA ga = GA(time(NULL) + run, population_size, ga_crossover_rate, ga_mutation_rate, ga_crossover_method.c_str(), seedfile.c_str());
             results.push_back(ga.run(iterations));
+            cout << "RUN " << run + 1 << " Done." << endl;
+        }
+        cout << "Time: " << time(NULL) - start << endl;
+    }
+
+    if (strcmp(algorithm.c_str(), "gap") == 0) {
+        population_size = atoi(argv[5]);
+        ga_crossover_rate = atof(argv[6]);
+        ga_mutation_rate = atof(argv[7]);
+        ga_crossover_method = argv[8];
+        time_t start = time(NULL);
+        for (int run = 0; run < runs; run++) {
+            GAP gap = GAP(time(NULL) + run, population_size, ga_crossover_rate, ga_mutation_rate, ga_crossover_method.c_str(), seedfile.c_str());
+            results.push_back(gap.run(iterations));
             cout << "RUN " << run + 1 << " Done." << endl;
         }
         cout << "Time: " << time(NULL) - start << endl;
@@ -162,7 +179,7 @@ int main(int argc, char *argv[]) {
     // Output to file
     do {
         file_index++;
-        filename = "output_" + algorithm + "_" + std::to_string(file_index) + ".txt";
+        filename = "output_" + algorithm + "_" + to_string(population_size) + "_" + to_string(crossover_rate) + "_" + to_string(f) + "_" + std::to_string(file_index) + ".txt";
     } while (exist(filename));
     fp = fopen(filename.c_str(), "w+");
     for (int i = 0; i < avg.size(); i++) {

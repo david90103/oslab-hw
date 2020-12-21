@@ -16,7 +16,7 @@
 using namespace std;
 
 class GA {
-private:
+protected:
     double bestScore;
     int population_size;
     double crossover_rate;
