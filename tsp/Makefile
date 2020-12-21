@@ -1,9 +1,9 @@
 SUBDIRS = aco lib ga de pso
 all:
 	for i in $(SUBDIRS); do\
-		g++ -c -O3 $$i/*.cpp;\
+		g++ -c -O3 -pthread $$i/*.cpp;\
 	done
-	g++ -g -O3 main.cpp *.o -o main;
+	g++ -g -O3 -pthread main.cpp *.o -o main;
 	g++ -g -O3 draw.cpp -o draw;
 clean:
 	rm -f *.exe

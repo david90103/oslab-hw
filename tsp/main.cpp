@@ -43,6 +43,7 @@ int main(int argc, char *argv[]) {
     double ga_crossover_rate = 0.7;
     double ga_mutation_rate = 0.1;
     string ga_crossover_method = "pmx";
+    int populations = 4;
     
     // DE parameters
     double crossover_rate = 0.7;
@@ -57,7 +58,7 @@ int main(int argc, char *argv[]) {
      * Parameters:
      * aco [runs] [iterations] [seedfile] [ants] [alpha] [beta] [rho] [q]
      * ga  [runs] [iterations] [seedfile] [population size] [crossover rate] [mutation rate] [crossover method]
-     * gap [runs] [iterations] [seedfile] [population size] [crossover rate] [mutation rate] [crossover method]
+     * gap [runs] [iterations] [seedfile] [populations] [population size] [crossover rate] [mutation rate] [crossover method]
      * de  [runs] [iterations] [seedfile] [population size] [crossover rate] [f]
      * pso
      */
@@ -96,13 +97,14 @@ int main(int argc, char *argv[]) {
     }
 
     if (strcmp(algorithm.c_str(), "gap") == 0) {
-        population_size = atoi(argv[5]);
-        ga_crossover_rate = atof(argv[6]);
-        ga_mutation_rate = atof(argv[7]);
-        ga_crossover_method = argv[8];
+        populations = atoi(argv[5]);
+        population_size = atoi(argv[6]);
+        ga_crossover_rate = atof(argv[7]);
+        ga_mutation_rate = atof(argv[8]);
+        ga_crossover_method = argv[9];
         time_t start = time(NULL);
         for (int run = 0; run < runs; run++) {
-            GAP gap = GAP(time(NULL) + run, population_size, ga_crossover_rate, ga_mutation_rate, ga_crossover_method.c_str(), seedfile.c_str());
+            GAP gap = GAP(time(NULL) + run, populations, population_size, ga_crossover_rate, ga_mutation_rate, ga_crossover_method.c_str(), seedfile.c_str());
             results.push_back(gap.run(iterations));
             cout << "RUN " << run + 1 << " Done." << endl;
         }

@@ -42,6 +42,8 @@
         "queue": "cpp",
         "climits": "cpp",
         "algorithm": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "mutex": "cpp",
+        "thread": "cpp"
     }
 }

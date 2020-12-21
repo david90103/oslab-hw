@@ -32,19 +32,23 @@ protected:
     vector<vector<int>> initPopulation(vector<vector<double>> cities);
     double distance(vector<double> a, vector<double> b);
     int fitness(vector<int> arr);
-    void evalPopulation(vector<bool> is_new_member);
+    vector<double> evalPopulation(vector<bool> is_new_member, vector<vector<int>> pop, vector<double> f_values);
     bool isValidPath(vector<int> path);
     void printPath(vector<int> path);
     vector<int> rouletteWheel();
     vector<int> tournament();
+    vector<int> rouletteWheel(vector<vector<int>> pop, vector<double> f_value);
+    vector<int> tournament(vector<vector<int>> pop, vector<double> f_value);
     vector<vector<int>> (GA::*crossover)(vector<int>, vector<int>);
+    vector<int> mutation(vector<int> target);
+public:
+    GA();
+    GA(int bits, int population_s, double crossover_r, double mutation_r, char const *crossover_method, char const *seedfile);
+    vector<double> run(int generations);
+    // For GAP class to use
     vector<vector<int>> partiallyMappedCrossover(vector<int> father, vector<int> mother);
     vector<vector<int>> cycleCrossover(vector<int> father, vector<int> mother);
     vector<vector<int>> orderCrossover(vector<int> father, vector<int> mother);
-    inline vector<int> mutation(vector<int> target);
-public:
-    GA(int bits, int population_s, double crossover_r, double mutation_r, char const *crossover_method, char const *seedfile);
-    vector<double> run(int generations);
 };
 
 #endif // TSP_GA_H_

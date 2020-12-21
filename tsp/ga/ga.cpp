@@ -1,5 +1,9 @@
 #include "ga.hpp"
 
+GA::GA() {
+
+}
+
 GA::GA(int bits, int population_s, double crossover_r, double mutation_r, char const *crossover_method, char const *seedfile) {
     srand(time(NULL));
     bestScore = DBL_MAX;
@@ -16,7 +20,6 @@ GA::GA(int bits, int population_s, double crossover_r, double mutation_r, char c
         crossover = &GA::cycleCrossover;
     else // ox
         crossover = &GA::orderCrossover;
-    evalPopulation(vector<bool>(population_size, true));
 }
 
 vector<vector<double>> GA::readCitiesFromFile(char const *seedfile) {
@@ -90,19 +93,20 @@ double GA::distance(vector<double> a, vector<double> b) {
  * Parameter is_new_member is a boolean list to track if a chromosome
  * in population is created by crossover or directly from parents
  */
-void GA::evalPopulation(vector<bool> is_new_member) {
+vector<double> GA::evalPopulation(vector<bool> is_new_member, vector<vector<int>> pop, vector<double> f_values) {
     double temp;
-    for (int i = 0; i < population.size(); i++) {
-        temp = fitness(population[i]);
-        fitness_values[i] = temp;
-        if (fitness_values[i] < bestScore) {
-            bestScore = fitness_values[i];
-            best = population[i];
+    for (int i = 0; i < pop.size(); i++) {
+        temp = fitness(pop[i]);
+        f_values[i] = temp;
+        if (f_values[i] < bestScore) {
+            bestScore = f_values[i];
+            best = pop[i];
         }
         if (is_new_member[i]) {
             result.push_back(bestScore);
         }
     }
+    return f_values;
 }
 
 /**
@@ -119,8 +123,12 @@ int GA::fitness(vector<int> path) {
  * Selection using Roulette Wheel
  */
 vector<int> GA::rouletteWheel() {
+   return rouletteWheel(population, fitness_values);
+}
+
+vector<int> GA::rouletteWheel(vector<vector<int>> pop, vector<double> f_values) {
     double sum = 0;
-    vector<double> temp = fitness_values;
+    vector<double> temp = f_values;
     for (int i = 0; i < temp.size(); i++)
         sum += 1 / temp[i];
     for (int i = 0; i < temp.size(); i++) 
@@ -129,22 +137,26 @@ vector<int> GA::rouletteWheel() {
     for (int i = 0; i < population_size; i++) {
         sum += temp[i];
         if (sum >= target) {
-            return population[i];
+            return pop[i];
         }
     }
-    return population[population_size - 1];
+    return pop[population_size - 1];
 }
 
 /**
  * Selection using Tournament Selection
  */
 vector<int> GA::tournament() {
-    int i = rand() % population_size;
-    int j = rand() % population_size;
-    if (fitness_values[i] < fitness_values[j]) {
-        return population[i];
+   return tournament(population, fitness_values);
+}
+
+vector<int> GA::tournament(vector<vector<int>> pop, vector<double> f_values) {
+    int i = rand() % pop.size();
+    int j = rand() % pop.size();
+    if (f_values[i] < f_values[j]) {
+        return pop[i];
     }
-    return population[j];
+    return pop[j];
 }
 
 bool GA::isValidPath(vector<int> path) {
@@ -363,7 +375,7 @@ vector<vector<int>> GA::orderCrossover(vector<int> father, vector<int> mother) {
  * Mutation
  * Random swap 2 neighbor cities
  */
-inline vector<int> GA::mutation(vector<int> target) {
+vector<int> GA::mutation(vector<int> target) {
     // We don't want to mutate the first and last position
     int i = rand() % (target.size() - 2) + 1;
     int j = rand() % (target.size() - 2) + 1;
@@ -376,6 +388,7 @@ inline vector<int> GA::mutation(vector<int> target) {
 }
 
 vector<double> GA::run(int generations) {
+    fitness_values = evalPopulation(vector<bool>(population_size, true), population, fitness_values);
     for (int gen = 1; gen <= generations; gen++) {
         vector<int> a, b;
         vector<vector<int>> crossover_result;
@@ -408,7 +421,7 @@ vector<double> GA::run(int generations) {
         }
         // Apply population and fitness values
         population = new_population;
-        evalPopulation(new_member_list);
+        fitness_values = evalPopulation(new_member_list, population, fitness_values);
         
         // Record and log
         if (gen % 100 == 0 || gen < 20) {
