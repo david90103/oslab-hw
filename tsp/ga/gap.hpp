@@ -8,19 +8,20 @@
 class GAP : public GA {
 private:
     // Pass a solution to another population every 100 iterations
-    const int EXCHANGE_SOLUTION_GEN = 100;
+    static const int EXCHANGE_SOLUTION_GEN = 100;
     int total_threads;
     // Shared in all threads
     static int ready_to_exchange;
+    static int current_exchange_gen;
+    static int threads_to_wait;
     static vector<vector<int>> exchange_pool;
     // This is a mutex for ready_to_exchange and exchange_pool
     static mutex exchange_lock;
-    static int finished;
-    static mutex finished_lock;
+    // This is a mutex for bestScore and best
     static mutex best_score_lock;
     // Override evalPopulation because we need to lock bestScore
     vector<double> evalPopulation(vector<bool> is_new_member, vector<vector<int>> pop, vector<double> f_values);
-    vector<vector<int>> exchange(vector<vector<int>> population);
+    vector<vector<int>> exchange(vector<vector<int>> population, int generation);
     void threadHandler(int generations);
 public:
     GAP(): GA() {};

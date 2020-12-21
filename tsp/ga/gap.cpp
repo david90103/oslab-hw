@@ -2,23 +2,20 @@
 
 // Reference: https://coherence0815.wordpress.com/2015/04/19/static-class-member-initialization-in-c/
 int GAP::ready_to_exchange = 0;
-int GAP::finished = 0;
+int GAP::threads_to_wait = 0;
+int GAP::current_exchange_gen = GAP::EXCHANGE_SOLUTION_GEN;
 mutex GAP::exchange_lock;
-mutex GAP::finished_lock;
 mutex GAP::best_score_lock;
 vector<vector<int>> GAP::exchange_pool = vector<vector<int>>();
 
 GAP::GAP(int bits,int populations, int population_s, double crossover_r, double mutation_r, char const *crossover_method, char const *seedfile) {
-    // GA(bits, population_s, crossover_r, mutation_r, crossover_method, seedfile);
     srand(time(NULL));
     bestScore = DBL_MAX;
     population_size = population_s;
     crossover_rate = crossover_r;
     mutation_rate = mutation_r;
-    fitness_values = vector<double>(population_size, DBL_MAX);
     cities = readCitiesFromFile(seedfile);
     distances = initDistances(cities);
-    population = initPopulation(cities);
     if (strcmp(crossover_method, "pmx") == 0)
         crossover = &GA::partiallyMappedCrossover;
     else if (strcmp(crossover_method, "cx") == 0)
@@ -52,37 +49,36 @@ vector<double> GAP::evalPopulation(vector<bool> is_new_member, vector<vector<int
     return f_values;
 }
 
-mutex aa;
-vector<vector<int>> GAP::exchange(vector<vector<int>> population) {
+vector<vector<int>> GAP::exchange(vector<vector<int>> population, int generation) {
+    // Wait for the generation for exchange mathces the generation this thread is running
+    // This can prevent only one thread keeps getting the chance to finish whole exchange process
+    while (generation > current_exchange_gen)
+        this_thread::yield();
+    
     int exchange_position = rand() % population.size();
     vector<int> s = population[exchange_position];
     // Lock the mutex and put solution to pool
     exchange_lock.lock();
     exchange_pool.push_back(s);
     ready_to_exchange++;
+    threads_to_wait = total_threads;
     exchange_lock.unlock();
 
-
     // Wait for other threads to push their solution to exchange_pool
-    // int spin is used to prevent compiler optimization under -O3
-    volatile int spin;
-    while (ready_to_exchange < total_threads)
-        spin++;
-
+    while (ready_to_exchange < threads_to_wait)
+        this_thread::yield();
 
     // Pick a solution from pool
     exchange_lock.lock();
     int r = rand() % exchange_pool.size();
     s = exchange_pool[r];
     exchange_pool.erase(exchange_pool.begin() + r);
-    // cout << ready_to_exchange << endl;
+    threads_to_wait = 0;
     ready_to_exchange--;
-    // cout << ready_to_exchange << endl;
-    // cout << exchange_pool.size() << endl;
+    if (ready_to_exchange == 0)
+        current_exchange_gen = generation + EXCHANGE_SOLUTION_GEN + 1;
     exchange_lock.unlock();
 
-    
-    // aa.lock();
     // cout << "exchange: ";
     // for (int i = 0; i < population[0].size(); i++)
     //     cout << population[exchange_position][i] << " ";
@@ -90,7 +86,6 @@ vector<vector<int>> GAP::exchange(vector<vector<int>> population) {
     // for (int i = 0; i < population[0].size(); i++)
     //     cout << s[i] << " ";
     // cout << endl;
-    // aa.unlock();
 
     // Replace solution
     population[exchange_position] = s;
@@ -98,7 +93,7 @@ vector<vector<int>> GAP::exchange(vector<vector<int>> population) {
 }
 
 void GAP::threadHandler(int generations) {
-    cout << "thread started" << endl;
+    cout << "thread started " << this_thread::get_id() << endl;
     vector<vector<int>> thread_population = initPopulation(cities);
     vector<double> thread_fitness_values = vector<double>(population_size, DBL_MAX);
     for (int gen = 1; gen <= generations; gen++) {
@@ -133,19 +128,14 @@ void GAP::threadHandler(int generations) {
         }
 
         // Exchange solution with other populations
-        if (gen % EXCHANGE_SOLUTION_GEN == 0) {
-            new_population = exchange(new_population);
-            cout << exchange_pool.size() << " at gen " << gen << endl; // TODO: Why 3 ?
-        }
+        if (gen % EXCHANGE_SOLUTION_GEN == 0 && gen < generations)
+            new_population = exchange(new_population, gen);
 
         // Apply population and fitness values
         thread_population = new_population;
         // evalPopulation(new_member_list);
         evalPopulation(vector<bool>(population_size, true), thread_population, thread_fitness_values);
     }
-    // finished_lock.lock();
-    // finished++;
-    // finished_lock.unlock();
     cout << "thread end" << endl;
 }
 
@@ -166,14 +156,14 @@ vector<double> GAP::run(int generations) {
     // }
     cout << "All threads finished." << endl;
     // Fix the result size because crossover may cause different evaluations for each population
-    int target_evaluations = generations * population_size * crossover_rate;
-    int original_size = result.size();
-    if (result.size() > target_evaluations)
-        for (int i = 0; i < original_size - target_evaluations; i++)
-            result.pop_back();
-    else if (result.size() < target_evaluations)
-        for (int i = 0; i < target_evaluations - original_size; i++)
-            result.push_back(bestScore);
+    // int target_evaluations = generations * population_size * crossover_rate;
+    // int original_size = result.size();
+    // if (result.size() > target_evaluations)
+    //     for (int i = 0; i < original_size - target_evaluations; i++)
+    //         result.pop_back();
+    // else if (result.size() < target_evaluations)
+    //     for (int i = 0; i < target_evaluations - original_size; i++)
+    //         result.push_back(bestScore);
     cout << "==========================" << endl;
     cout << "Found Best: " << endl;
     for (int i = 0; i < best.size(); i++) {
