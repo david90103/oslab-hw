@@ -21,7 +21,7 @@ DE::DE(unsigned int randseed, int population_size, double crossover_rate, double
             // t.push_back(-0 + (double) rand() / RAND_MAX * (2 * 40));
         }
         population.push_back(t);
-        fitness_values.push_back(evaluate(convertToPath(t)));
+        fitness_values.push_back(evaluateNormalized(convertToPathNormalized(t)));
     }
 }
 
