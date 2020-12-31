@@ -8,7 +8,7 @@
 class GAP : public GA {
 private:
     // Pass a solution to another population every EXCHANGE_SOLUTION_GEN iterations
-    static const int EXCHANGE_SOLUTION_GEN = 100;
+    static const int EXCHANGE_SOLUTION_GEN = 10;
     int total_threads;
     // Shared in all threads
     static int ready_to_exchange;

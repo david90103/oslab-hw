@@ -79,10 +79,10 @@ vector<double> DE::run(int iterations) {
                 global_best = u_arr[i];
                 best = path;
             }
-            result.push_back(evaluate(best));
+            // result.push_back(evaluate(best));
         }
         // Record and log
-        // result.push_back(evaluate(best));
+        result.push_back(evaluate(best));
         if (iter % 100 == 0) {
             cout << "Iteration: " << iter << " Best fitness: " << bestScore << " Best score: " << evaluate(best) << endl;
         }

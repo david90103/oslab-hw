@@ -102,9 +102,9 @@ vector<double> GA::evalPopulation(vector<bool> is_new_member, vector<vector<int>
             bestScore = f_values[i];
             best = pop[i];
         }
-        if (is_new_member[i]) {
-            result.push_back(bestScore);
-        }
+        // if (is_new_member[i]) {
+        //     result.push_back(bestScore);
+        // }
     }
     return f_values;
 }
@@ -422,6 +422,8 @@ vector<double> GA::run(int generations) {
         // Apply population and fitness values
         population = new_population;
         fitness_values = evalPopulation(new_member_list, population, fitness_values);
+
+        result.push_back(bestScore);
         
         // Record and log
         if (gen % 100 == 0 || gen < 20) {
@@ -429,18 +431,18 @@ vector<double> GA::run(int generations) {
         }
     }
     // Fix the result size because crossover may cause different evaluations for each population
-    int target_evaluations = generations * population_size * crossover_rate;
-    int original_size = result.size();
-    if (result.size() > target_evaluations) {
-        for (int i = 0; i < original_size - target_evaluations; i++) {
-            result.pop_back();
-        }
-    }
-    else if (result.size() < target_evaluations) {
-        for (int i = 0; i < target_evaluations - original_size; i++) {
-            result.push_back(bestScore);
-        }
-    }
+    // int target_evaluations = generations * population_size * crossover_rate;
+    // int original_size = result.size();
+    // if (result.size() > target_evaluations) {
+    //     for (int i = 0; i < original_size - target_evaluations; i++) {
+    //         result.pop_back();
+    //     }
+    // }
+    // else if (result.size() < target_evaluations) {
+    //     for (int i = 0; i < target_evaluations - original_size; i++) {
+    //         result.push_back(bestScore);
+    //     }
+    // }
     cout << "==========================" << endl;
     cout << "Found Best: " << endl;
     for (int i = 0; i < best.size(); i++) {

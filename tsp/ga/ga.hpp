@@ -46,6 +46,7 @@ public:
     GA(int bits, int population_s, double crossover_r, double mutation_r, char const *crossover_method, char const *seedfile);
     vector<double> run(int generations);
     // For GAP class to use
+    // Reference: https://stackoverflow.com/questions/40819713/error-iso-c-forbids-taking-the-address-of-an-unqualified-or-parenthesized-non
     vector<vector<int>> partiallyMappedCrossover(vector<int> father, vector<int> mother);
     vector<vector<int>> cycleCrossover(vector<int> father, vector<int> mother);
     vector<vector<int>> orderCrossover(vector<int> father, vector<int> mother);
