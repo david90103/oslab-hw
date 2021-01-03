@@ -101,6 +101,8 @@ vector<int> TSPAlgorithm::convertToPath(vector<double> coordinates, vector<vecto
     // int offset = rand() % cities.size();
     for (int i = 0; i < cities.size(); i++) {
         // vector<double> position = {coordinates[(offset + 2 * i) % cities.size()], coordinates[(offset + 2 * i + 1) % cities.size()]};
+        // double x = (coordinates[2 * i] + coordinates[(2 * i + 2) % coordinates.size()]) / 2;
+        // double y = (coordinates[2 * i + 1] + coordinates[((2 * i + 1) + 2) % coordinates.size()]) / 2;
         vector<double> position = {coordinates[2 * i], coordinates[2 * i + 1]};
         int next_city = findNearest(position, candidate_cities, cities);
         path.push_back(next_city);

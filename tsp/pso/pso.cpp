@@ -30,7 +30,8 @@ PSO::PSO(unsigned int randseed, int population_size, double w, double c1, double
         individual_bests_pos.push_back(temp);
         t.clear();
         for (int j = 0; j < dimension; j++) {
-            t.push_back(-1 + (double) rand() / RAND_MAX * 2); // -1 ~ 1
+            // t.push_back(-1 + (double) rand() / RAND_MAX * 2); // -1 ~ 1
+            t.push_back((double) rand() / RAND_MAX); // 0 ~ 1
         }
         velocities.push_back(t);
     }
@@ -48,10 +49,10 @@ void PSO::updatePosition() {
     for (int i = 0; i < population_size; i++) {
         for (int j = 0; j < dimension; j++) {
             population[i][j] += velocities[i][j];
-            if (population[i][j] > 1)
-                population[i][j] = 1;
-            if (population[i][j] < 0)
-                population[i][j] = 0;
+            // if (population[i][j] > 1)
+            //     population[i][j] = 1;
+            // if (population[i][j] < 0)
+            //     population[i][j] = 0;
         }
     }
 }

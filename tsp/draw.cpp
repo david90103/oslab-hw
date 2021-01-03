@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Normalize cities
-    // cities = normalize(cities);
+    cities = normalize(cities);
 
     // Initialize distance table
     for (int i = 0; i < cities.size(); i++) {

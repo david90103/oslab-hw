@@ -29,7 +29,8 @@ PSO1D::PSO1D(unsigned int randseed, int population_size, double w, double c1, do
         individual_bests_pos.push_back(temp);
         t.clear();
         for (int j = 0; j < dimension; j++) {
-            t.push_back(-1 + (double) rand() / RAND_MAX * 2); // -1 ~ 1
+            // t.push_back(-1 + (double) rand() / RAND_MAX * 2); // -1 ~ 1
+            t.push_back((double) rand() / RAND_MAX); // 0 ~ 1
         }
         velocities.push_back(t);
     }
@@ -60,15 +61,15 @@ void PSO1D::evaluatePopulation() {
     for (int i = 0; i < population_size; i++) {
         // vector<int> path = convertToPathNormalized(population[i]);
         // objective_values[i] = evaluateNormalized(path);
-        vector<int> path = convertToPath(population[i]);
-        objective_values[i] = evaluate(path);
+        vector<int> path = convertToPathNormalized(population[i]);
+        objective_values[i] = evaluateNormalized(path);
     }
     // Update global best
     for (int i = 0; i < population_size; i++) {
         if (objective_values[i] < bestFitness) {
             bestFitness = objective_values[i];
             global_best = population[i];
-            best = convertToPath(population[i]);
+            best = convertToPathNormalized(population[i]);
             bestScore = evaluate(best);
 
             // Draw animation

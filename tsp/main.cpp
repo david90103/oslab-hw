@@ -3,6 +3,7 @@
 #include "./ga/gap.hpp"
 #include "./de/de.hpp"
 #include "./de/de1d.hpp"
+#include "./de/de1dc.hpp"
 #include "./pso/pso.hpp"
 #include "./pso/pso1d.hpp"
 #include <stdio.h>
@@ -132,6 +133,19 @@ int main(int argc, char *argv[]) {
         for (int run = 0; run < runs; run++) {
             DE1D de1d = DE1D(time(NULL) + run, population_size, crossover_rate, f, seedfile.c_str());
             results.push_back(de1d.run(iterations));
+            cout << "RUN " << run + 1 << " Done." << endl;
+        }
+        cout << "Time: " << time(NULL) - start << endl;
+    }
+
+    if (strcmp(algorithm.c_str(), "de1dc") == 0) {
+        population_size = atoi(argv[5]);
+        crossover_rate = atof(argv[6]);
+        f = atof(argv[7]);
+        time_t start = time(NULL);
+        for (int run = 0; run < runs; run++) {
+            DE1DC de1dc = DE1DC(time(NULL) + run, population_size, crossover_rate, f, seedfile.c_str());
+            results.push_back(de1dc.run(iterations));
             cout << "RUN " << run + 1 << " Done." << endl;
         }
         cout << "Time: " << time(NULL) - start << endl;
